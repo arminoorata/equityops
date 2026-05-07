@@ -410,12 +410,13 @@ export function importCsv(text: string): ImportResult {
     "sharesGranted",
   ];
   // sharesVested is satisfied either by an explicit column OR by an
-  // unvested/outstanding/unreleased column we can derive from.
+  // unvested / unreleased column we can derive from. ("Outstanding" is
+  // intentionally NOT accepted — see EXTRA_HEADER_VARIANTS comment.)
   const hasVestedSource =
     index.sharesVested !== undefined ||
     extraIndex.sharesUnvested !== undefined;
   const missing: string[] = required.filter((r) => index[r] === undefined);
-  if (!hasVestedSource) missing.push("sharesVested (or unvested/outstanding)");
+  if (!hasVestedSource) missing.push("sharesVested (or unvested/unreleased)");
   if (missing.length > 0) {
     return {
       awards: [],

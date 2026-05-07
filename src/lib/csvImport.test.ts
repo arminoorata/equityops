@@ -132,7 +132,7 @@ A2,RSU,2024-02-15,200,50`;
   });
 });
 
-describe("importCsv — derive sharesVested from unvested/outstanding (P1.4)", () => {
+describe("importCsv — derive sharesVested from unvested/unreleased (P1.4)", () => {
   it("derives sharesVested from an Unvested column when Shares Vested is absent", () => {
     const csv = `Award ID,Award Type,Grant Date,Shares Granted,Unvested
 A1,RSU,2024-01-15,1000,750`;
