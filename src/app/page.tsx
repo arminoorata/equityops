@@ -56,12 +56,11 @@ export default function HomePage() {
           />
           <ToolCard
             title="Equity Event Readiness Planner"
-            description="30-day countdown checklist + coordination email drafts for vesting cliffs, double-trigger RSU events, tender windows, IPO lockups, M&A acceleration, and spin-offs. Your platform processes the event; this orchestrates the work around it."
-            href="#"
-            audience="TR managers · Equity ops"
+            description="Phased countdown checklist + coordination email drafts for vesting cliffs, double-trigger RSU events at IPO, tender offers, IPO lockup expirations, M&A acceleration, spin-offs, and plan terminations. Your platform processes the event; this orchestrates the work around it."
+            href="/event-readiness"
+            audience="TR managers · Equity ops · Senior leaders prepping a transaction"
             stage="Private + public"
-            cta="In progress"
-            comingSoon
+            cta="Open the planner"
           />
         </div>
       </section>

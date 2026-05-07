@@ -27,9 +27,10 @@ A tool earns Phase 1 status when it scores well on all four:
 
 1. **Stock Plan Health Check** — live at `/plan-health`
 2. **Retirement Vesting Impact Forecaster** — live at `/retirement-vesting`
-3. **Equity Event Readiness Planner** — Phase 3 (next)
-4. **Refresh Grant Sizing Tool** — Phase 4
-5. Strategic, narrative, and analytics gap-fillers — see categories below
+3. **Equity Event Readiness Planner** — live at `/event-readiness`
+4. **Refresh Grant Sizing Tool** — Phase 4 (next)
+5. **Hire Range Equity Calculator** — Phase 4
+6. Strategic, narrative, and analytics gap-fillers — see categories below
 
 The order picks tools that demonstrate the "above the vendor" framing
 clearly and serve senior-leader audiences first.
@@ -78,11 +79,10 @@ move in sequence. The vendor doesn't manage that.
 
 | Tool | Phase | Audience | Stage | Vendor gap it fills |
 |---|---|---|---|---|
-| Equity Event Readiness Planner | **3 (next)** | Mid + Sr | Both | 30-day countdown checklist + coordination email drafts for cliffs, double-trigger RSUs, tender windows, IPO lockups, M&A acceleration, spin-offs. |
+| Equity Event Readiness Planner | **3 (live)** | Mid + Sr | Both | Phased countdown checklist + coordination email drafts for cliffs, double-trigger RSUs at IPO, tender offers, IPO lockup expirations, M&A acceleration, spin-offs, and plan terminations. Stage-aware. |
 | 10b5-1 Plan Setup Helper | 5 | Mid + Sr | Public | Cooling-off, allowed amendments per 2023 amendments. Vendor doesn't validate plan terms. |
 | IPO Readiness Checker | 6 | Sr | Pre-IPO | Granting hygiene, plan structure, share-reserve runway, double-trigger prep. End-to-end checklist. |
-| Tender Offer Coordinator | 6 | Mid + Sr | Private | Cross-functional checklist + comms templates. Vendor processes the transaction; doesn't manage the announcement. |
-| Lockup Expiration Communications Builder | 6 | Sr | Public | Employee comms + market-signaling considerations. Vendor doesn't draft language. |
+| Lockup Expiration Communications Builder | 6 | Sr | Public | Employee comms + market-signaling considerations. Vendor doesn't draft language. (Note: covered as a sub-event in the Event Readiness Planner; this would be a deeper standalone.) |
 
 ---
 
