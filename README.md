@@ -24,32 +24,56 @@ workbench leaves it alone.
 
 One Next.js 16 + Tailwind 4 app, one subdomain, each tool as a route:
 
-- `/plan-health` — Stock Plan Health Check (live)
-- `/event-readiness` — Equity Event Readiness Planner (Phase 2)
-- additional routes ship per `ROADMAP.md`
+- `/plan-health` — Stock Plan Health Check
+- `/retirement-vesting` — Retirement Vesting Impact Forecaster
+- additional routes ship per [`ROADMAP.md`](./ROADMAP.md)
 
 The existing standalone siblings (`equity.`, `fair.`, `flsa.`, `signs.`,
 `jobarchitecture.`) keep their own subdomains because they're products
 with their own identity. The workbench is the home for *new* tools
 specifically designed to fill vendor-platform gaps.
 
+## Privacy and data handling
+
+- **No server-side ingestion.** The app does not store, transmit, or
+  persist any user data on a server. There is no backend, no database,
+  no logged account, no analytics tags.
+- **Client-side CSV/XLSX parsing is allowed and intentional** for tools
+  whose workflow starts with a vendor export (e.g., a grants outstanding
+  CSV from Fidelity or Shareworks). The file is read in the browser, the
+  parsed result lives in memory for the session, and it is gone the
+  moment the tab closes. Nothing is uploaded.
+- **No system of record.** The workbench will never become an
+  authoritative source of cap-table or grant data. The practitioner's
+  stock administration platform owns the source of truth.
+- **No external AI calls with employee data.** Where a tool produces
+  narrative output, it is generated locally by deterministic templates
+  filled with the user's inputs. AI-style explanation is only ever
+  layered as optional, opt-in copy generation, never as the engine
+  driving an outcome.
+
 ## Repository layout
 
-- [`RESEARCH.md`](./RESEARCH.md) — landscape and audience analysis. Written
-  from the viewpoint of a Fortune 50 SBC practitioner.
-- [`ROADMAP.md`](./ROADMAP.md) — prioritized build queue, organized by which
-  vendor-platform gap each tool fills.
-- `src/` — the Next.js app (chrome, routes, pure-functional libs, tests).
+- [`RESEARCH.md`](./RESEARCH.md) — landscape and audience analysis,
+  written from the viewpoint of a Fortune 50 SBC practitioner.
+- [`ROADMAP.md`](./ROADMAP.md) — prioritized build queue, organized by
+  which vendor-platform gap each tool fills.
+- `src/` — the Next.js app: chrome, routes, pure-functional libs in
+  `src/lib/`, components in `src/components/`, route shells in
+  `src/app/`. Co-located vitest test files (`*.test.ts`) live next to
+  the libs they cover.
 
 ## Cross-references
 
-These existing siblings are referenced from the toolbox catalog page (as
-links to their own subdomains) but are not rebuilt inside the toolbox.
+These existing siblings are referenced from the workbench landing page
+but are not rebuilt inside the workbench.
 
-- [`equity.arminoorata.com`](https://equity.arminoorata.com) — Equity Education
-  Portal (employee-facing).
-- [`fair.arminoorata.com`](https://fair.arminoorata.com) — fair pay diagnostic.
-- [`flsa.arminoorata.com`](https://flsa.arminoorata.com) — FLSA classification.
+- [`equity.arminoorata.com`](https://equity.arminoorata.com) — Equity
+  Education Portal (employee-facing).
+- [`fair.arminoorata.com`](https://fair.arminoorata.com) — fair pay
+  diagnostic.
+- [`flsa.arminoorata.com`](https://flsa.arminoorata.com) — FLSA
+  classification.
 - [`jobarchitecture.arminoorata.com`](https://jobarchitecture.arminoorata.com)
   — job architecture education.
 - ProxyMiner (workflow tool, not a public web app yet) — SEC proxy CD&A
@@ -58,38 +82,26 @@ links to their own subdomains) but are not rebuilt inside the toolbox.
 
 ## What this project will NOT do
 
-- It will not become a system of record. No employee data, no cap tables, no
-  ledger.
-- It will not compete with vendor platforms. The toolbox is the practitioner's
+- Become a system of record. No persistence, no cap-table store, no
+  employee record.
+- Compete with vendor platforms. The workbench is the practitioner's
   scratch pad, not the enterprise stack.
-- It will not host paid services. Free public, like the rest of the family.
+- Replicate proprietary scoring frameworks (ISS EPSC, Glass Lewis PvP).
+  Tools may surface ISS-aware *inputs* without claiming to reproduce
+  any score.
+- Provide tax, legal, or financial advice. Outputs are educational
+  diagnostics and starting points for conversations with qualified
+  advisors.
+- Host paid services. Free public, like the rest of the family.
 
-## North star
+## Build and run
 
-After a market check (Equilar, ISS 2026 EPSC, Mercer guidance, Wealthlane,
-OptionTrax) and Codex review, the order is:
+```
+npm install
+npm run dev      # local dev server
+npm run lint     # eslint
+npm test         # vitest
+npm run build    # next build (static)
+```
 
-1. **Phase 1: Stock Plan Health Check Lite** — board-ready stock plan
-   health memo. Burn rate, overhang, share reserve runway, plan feature
-   flags, questions to ask legal/finance, board memo draft, with a clear
-   "not a proxy advisor model" disclaimer. Best fit for Armi's CHRO/CFO
-   thought-leadership positioning.
-2. **Phase 2: Equity Event Readiness Planner** — broader than Evan's
-   vesting-only tool. Covers vesting cliffs, double-trigger RSUs at IPO,
-   tender windows, IPO lockups, M&A acceleration, spin-offs. Cross-
-   functional checklists + coordination email drafts.
-3. **Phase 3+:** Hire Range Equity Calculator, Refresh Sizing, IPO
-   Readiness, 10b5-1 Setup, ASC 718 Forecaster. See [`ROADMAP.md`](./ROADMAP.md).
-
-## Open questions for Armi
-
-1. **Brand name and subdomain.** Working candidates: `sbc.arminoorata.com`
-   or `equityops.arminoorata.com`. Other options: `workbench`, `operator`,
-   `granted`, `vested`.
-2. **Phase 1 working title.** Candidates in [`ROADMAP.md`](./ROADMAP.md):
-   "Stock Plan Health Check," "Board-Ready Stock Plan Health Memo,"
-   "ISS-Aware Stock Plan Readiness Check."
-3. **Scaffold timing.** Project foundation is in place. Next step: clone
-   `jobarchitecture/` as the Next.js 16 + Tailwind 4 starting point, set up
-   the `/plan-health` route, and start the Stock Plan Health Check Lite
-   build.
+Each push to `main` auto-deploys via Vercel's GitHub integration.

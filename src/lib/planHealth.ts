@@ -10,13 +10,19 @@
  * References (general industry practice as of 2026):
  * - Burn rate: gross shares granted in a fiscal year / weighted-average
  *   common shares outstanding for the year. ISS applies size-weighting
- *   factors to options vs full-value awards in EPSC; the lite model
+ *   factors to options vs full-value awards in EPSC; this tool
  *   surfaces the unweighted figure and notes the delta in the memo.
  * - Overhang: (outstanding awards + shares available for grant) /
  *   (outstanding awards + shares available for grant + common shares
  *   outstanding). Sometimes shown as fully-diluted percentage.
  * - Reserve runway: shares available / trailing-year grants. A simple
  *   "how many more years can we grant at this rate" measure.
+ *
+ * All three are diagnostic measures. Burn rate is a historical run-rate,
+ * not a forecast. Overhang is a snapshot of dilution capacity, not actual
+ * dilution. Reserve runway is a linear extrapolation that assumes a
+ * stable grant cadence. Treat them as inputs to a conversation, not
+ * verdicts.
  */
 
 export type PlanHealthInputs = {

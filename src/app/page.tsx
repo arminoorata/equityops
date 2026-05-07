@@ -47,6 +47,14 @@ export default function HomePage() {
             cta="Open the diagnostic"
           />
           <ToolCard
+            title="Retirement Vesting Impact Forecaster"
+            description="Turn a grants outstanding CSV into a retirement-date impact analysis: which awards fully vest, which pro-rate, which forfeit. Deterministic rules engine with a copyable memo for equity, legal, and payroll review."
+            href="/retirement-vesting"
+            audience="Equity admin · TR managers · senior leaders prepping a retirement"
+            stage="Private + public"
+            cta="Open the forecaster"
+          />
+          <ToolCard
             title="Equity Event Readiness Planner"
             description="30-day countdown checklist + coordination email drafts for vesting cliffs, double-trigger RSU events, tender windows, IPO lockups, M&A acceleration, and spin-offs. Your platform processes the event; this orchestrates the work around it."
             href="#"

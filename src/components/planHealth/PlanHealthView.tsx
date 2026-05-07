@@ -127,6 +127,107 @@ export default function PlanHealthView() {
         </div>
       </div>
 
+      <details
+        className="rounded-md border p-4"
+        style={{
+          borderColor: "var(--line)",
+          background: "var(--surface)",
+        }}
+      >
+        <summary
+          className="cursor-pointer text-sm font-medium"
+          style={{ color: "var(--accent)" }}
+        >
+          What these measures are (and what they aren&rsquo;t)
+        </summary>
+        <div
+          className="mt-3 grid gap-4 text-sm leading-6 md:grid-cols-2"
+          style={{ color: "var(--muted)" }}
+        >
+          <div>
+            <p
+              className="text-[11px] font-semibold uppercase tracking-[0.18em]"
+              style={{ color: "var(--text)" }}
+            >
+              Burn rate
+            </p>
+            <p className="mt-1">
+              Gross shares granted in a fiscal year divided by the weighted-
+              average common shares outstanding for that year. A historical
+              run-rate, not a forecast. ISS Equity Plan Scorecard (EPSC)
+              applies size-weighting factors that count full-value awards
+              (RSUs, PSUs) more heavily than options; this tool reports the
+              unweighted figure so it ties cleanly to your finance team&rsquo;s
+              standard report.
+            </p>
+          </div>
+          <div>
+            <p
+              className="text-[11px] font-semibold uppercase tracking-[0.18em]"
+              style={{ color: "var(--text)" }}
+            >
+              Overhang
+            </p>
+            <p className="mt-1">
+              A snapshot of dilution capacity, not actual dilution.
+              Fully-diluted view: (outstanding awards + plan reserve) /
+              (outstanding awards + plan reserve + common shares outstanding).
+              Investor view: same numerator over common shares outstanding.
+              The two framings are both used in proxy disclosure; some
+              investors prefer one, some the other.
+            </p>
+          </div>
+          <div>
+            <p
+              className="text-[11px] font-semibold uppercase tracking-[0.18em]"
+              style={{ color: "var(--text)" }}
+            >
+              Reserve runway
+            </p>
+            <p className="mt-1">
+              Share reserve divided by the recent year&rsquo;s grants, in years.
+              A linear extrapolation that assumes a stable grant cadence.
+              Hiring growth, refresh expansion, or a new performance program
+              can compress this materially. Treat it as a planning trigger,
+              not a forecast.
+            </p>
+          </div>
+          <div>
+            <p
+              className="text-[11px] font-semibold uppercase tracking-[0.18em]"
+              style={{ color: "var(--text)" }}
+            >
+              Plan feature flags
+            </p>
+            <p className="mt-1">
+              Seven features ISS, Glass Lewis, and most institutional
+              investors flag as concerns: single-trigger acceleration,
+              evergreen reserve, repricing without shareholder approval,
+              share recycling, dividend equivalents on unvested awards,
+              liberal change-in-control definition, discounted stock options.
+              These are not in any vendor report; they live in your plan
+              document and any subsequent amendments.
+            </p>
+          </div>
+          <div className="md:col-span-2">
+            <p
+              className="text-[11px] font-semibold uppercase tracking-[0.18em]"
+              style={{ color: "var(--accent)" }}
+            >
+              What this tool is not
+            </p>
+            <p className="mt-1">
+              Not a replication of the ISS Equity Plan Scorecard, the Glass
+              Lewis Pay-for-Performance score, or any other proprietary
+              framework. The 2026 ISS EPSC framework changed materially;
+              replicating its scoring would create accuracy and legal risk.
+              Outputs are educational diagnostics. Bring them to a
+              conversation with legal, finance, and external advisors.
+            </p>
+          </div>
+        </div>
+      </details>
+
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1.1fr]">
         <section className="space-y-6">
           <CardSection title="Company">
@@ -154,7 +255,7 @@ export default function PlanHealthView() {
           <CardSection
             title="Burn rate inputs"
             hint="Gross shares granted in each fiscal year, paired with the weighted-average common shares outstanding for that year. Most recent year first."
-            sourceHint="Fidelity / Shareworks / Computershare: standard equity-grant summary report (or 'Grants by Period') for the share counts. WASO is on the cover page of your 10-Q / 10-K."
+            sourceHint="Fidelity / Shareworks / Computershare / Carta: standard equity-grant summary report (or 'Grants by Period') for the share counts. WASO is on the cover page of your 10-Q / 10-K (or for private companies, your most recent cap-table snapshot)."
           >
             <Year3
               labelGrants="Annual gross grants"
@@ -169,7 +270,7 @@ export default function PlanHealthView() {
           <CardSection
             title="Overhang inputs"
             hint="Awards outstanding (unvested + vested-but-unexercised), shares left in the plan reserve, and total common shares outstanding on today's basis."
-            sourceHint="Fidelity / Shareworks: outstanding awards from the 'Plan Position' or 'Award Status Summary' report. Plan reserve from the 'Share Reserve' or 'Plan Capacity' view. Common shares outstanding from your latest 10-Q balance sheet."
+            sourceHint="Fidelity / Shareworks / Carta: outstanding awards from the 'Plan Position' or 'Award Status Summary' report. Plan reserve from the 'Share Reserve' or 'Plan Capacity' view. Common shares outstanding from your latest 10-Q balance sheet (or cap-table snapshot for private companies)."
           >
             <NumberField
               label="Awards outstanding"

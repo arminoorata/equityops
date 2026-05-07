@@ -26,9 +26,10 @@ A tool earns Phase 1 status when it scores well on all four:
 ## North star order
 
 1. **Stock Plan Health Check** — live at `/plan-health`
-2. **Equity Event Readiness Planner** — Phase 2
-3. **Refresh Grant Sizing Tool** — Phase 3
-4. Strategic, narrative, and analytics gap-fillers — see categories below
+2. **Retirement Vesting Impact Forecaster** — live at `/retirement-vesting`
+3. **Equity Event Readiness Planner** — Phase 3 (next)
+4. **Refresh Grant Sizing Tool** — Phase 4
+5. Strategic, narrative, and analytics gap-fillers — see categories below
 
 The order picks tools that demonstrate the "above the vendor" framing
 clearly and serve senior-leader audiences first.
@@ -43,11 +44,12 @@ by 10%" or "what if we added 200 hires to next year's plan."
 
 | Tool | Phase | Audience | Stage | Vendor gap it fills |
 |---|---|---|---|---|
-| Refresh Grant Sizing Tool | 3 | Mid + Sr | Both | Multi-tier refresh logic, performance triggers, vest patterns. Today: Excel. |
-| Hire Range Equity Calculator | 3 | All | Both | Translate offer-letter $ value to share count given current FMV + dilution + 4-year expected value. Today: Excel. |
-| Plan Amendment Impact Modeler | 4 | Sr | Public | "What does adding evergreen do to overhang?" / "What does extending vest do to expense?" Today: custom Excel each time. |
-| Dilution Stress Tester | 4 | Sr | Both | "If we hire 200 more next year, what does overhang look like?" Vendor shows current state, not forward scenarios. |
-| M&A Retention Pool Modeler | 5 | Sr | Both | Acquisition retention pool sizing, conversion ratios, accelerated vesting. Always Excel today. |
+| Retirement Vesting Impact Forecaster | **2 (live)** | All | Both | Per-award status, shares vesting due to retirement, shares forfeited, memo for legal/payroll. Vendor shows current state; the "what happens at the retirement date" model lives in Excel. |
+| Refresh Grant Sizing Tool | 4 | Mid + Sr | Both | Multi-tier refresh logic, performance triggers, vest patterns. Today: Excel. |
+| Hire Range Equity Calculator | 4 | All | Both | Translate offer-letter $ value to share count given current FMV + dilution + 4-year expected value. Today: Excel. |
+| Plan Amendment Impact Modeler | 5 | Sr | Public | "What does adding evergreen do to overhang?" / "What does extending vest do to expense?" Today: custom Excel each time. |
+| Dilution Stress Tester | 5 | Sr | Both | "If we hire 200 more next year, what does overhang look like?" Vendor shows current state, not forward scenarios. |
+| M&A Retention Pool Modeler | 6 | Sr | Both | Acquisition retention pool sizing, conversion ratios, accelerated vesting. Always Excel today. |
 
 ---
 
@@ -76,11 +78,11 @@ move in sequence. The vendor doesn't manage that.
 
 | Tool | Phase | Audience | Stage | Vendor gap it fills |
 |---|---|---|---|---|
-| Equity Event Readiness Planner | **2** | Mid + Sr | Both | 30-day countdown checklist + coordination email drafts for cliffs, double-trigger RSUs, tender windows, IPO lockups, M&A acceleration, spin-offs. |
-| 10b5-1 Plan Setup Helper | 4 | Mid + Sr | Public | Cooling-off, allowed amendments per 2023 amendments. Vendor doesn't validate plan terms. |
-| IPO Readiness Checker | 5 | Sr | Pre-IPO | Granting hygiene, plan structure, share-reserve runway, double-trigger prep. End-to-end checklist. |
-| Tender Offer Coordinator | 5 | Mid + Sr | Private | Cross-functional checklist + comms templates. Vendor processes the transaction; doesn't manage the announcement. |
-| Lockup Expiration Communications Builder | 5 | Sr | Public | Employee comms + market-signaling considerations. Vendor doesn't draft language. |
+| Equity Event Readiness Planner | **3 (next)** | Mid + Sr | Both | 30-day countdown checklist + coordination email drafts for cliffs, double-trigger RSUs, tender windows, IPO lockups, M&A acceleration, spin-offs. |
+| 10b5-1 Plan Setup Helper | 5 | Mid + Sr | Public | Cooling-off, allowed amendments per 2023 amendments. Vendor doesn't validate plan terms. |
+| IPO Readiness Checker | 6 | Sr | Pre-IPO | Granting hygiene, plan structure, share-reserve runway, double-trigger prep. End-to-end checklist. |
+| Tender Offer Coordinator | 6 | Mid + Sr | Private | Cross-functional checklist + comms templates. Vendor processes the transaction; doesn't manage the announcement. |
+| Lockup Expiration Communications Builder | 6 | Sr | Public | Employee comms + market-signaling considerations. Vendor doesn't draft language. |
 
 ---
 
@@ -132,12 +134,22 @@ education guides — all hand-written today.
 
 ## What we won't build (in this project)
 
-- System-of-record tooling (cap tables, ledgers, transaction processing).
-- Tax preparation or filing.
-- ISS / Glass Lewis score replication (proprietary, accuracy risk).
-- Anything that ingests cap-table or payroll data — typed inputs only.
-- Personal financial advice for grantees (the Equity Portal sibling
-  handles educational content).
+- **System-of-record tooling.** No cap-table store, no ledger, no
+  transaction processing. The practitioner's vendor platform owns the
+  source of truth.
+- **Server-side ingestion.** Nothing the user provides leaves the
+  browser. No uploads to a backend, no persistence, no third-party
+  analytics with user data. *Client-side CSV/XLSX parsing is allowed
+  and intentional* — for tools whose natural workflow starts with a
+  vendor export (e.g., a grants outstanding CSV from Fidelity or
+  Shareworks), the file is parsed in-browser and the result lives only
+  in the tab's memory for that session.
+- **Tax preparation or filing.** Educational scenarios only.
+- **ISS / Glass Lewis score replication.** The frameworks are
+  proprietary and the 2026 ISS EPSC framework changed. Tools may
+  surface ISS-aware *inputs* without claiming to reproduce any score.
+- **Personal financial advice for grantees.** The Equity Portal sibling
+  handles employee-facing educational content.
 
 ---
 
