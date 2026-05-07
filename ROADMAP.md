@@ -155,11 +155,10 @@ education guides — all hand-written today.
 
 ## Decisions still open
 
-1. **First priority among Phase 3+ tools.** Refresh Grant Sizing has the
+1. **First priority among Phase 4 tools.** Refresh Grant Sizing has the
    broadest immediate utility. Hire Range Equity Calculator pairs with
    the Equity Portal nicely. Plan Amendment Impact Modeler has the
    strongest senior-leader story.
-2. **GitHub + Vercel hookup** for `equityops.arminoorata.com`.
-3. **Branding evolution.** The brand identity can grow with the toolbox
+2. **Branding evolution.** The brand identity can grow with the toolbox
    (logo treatment, illustration of the "above the vendor" stack
    metaphor). Currently using the eyebrow-only sibling pattern.

@@ -639,7 +639,7 @@ export default function RetirementVestingView() {
           <CardSection
             title="Awards"
             hint="Manual entry or paste/upload a grants outstanding CSV from your stock administration platform."
-            sourceHint="Fidelity / Shareworks / Computershare / E*TRADE / Carta: 'Grants Outstanding' or 'Award Status' export. Required columns: Award ID, Award Type, Grant Date, Shares Granted, Shares Vested. Optional: Vest Start, Vest End, Price, Strike, Employee."
+            sourceHint="Fidelity / Shareworks / Computershare / E*TRADE / Carta: 'Grants Outstanding' or 'Award Status' export. Required columns: Award ID, Award Type, Grant Date, Shares Granted, AND a vesting source — either Shares Vested OR an explicit Unvested / Unreleased column (Outstanding alone is ambiguous and is not accepted). Optional: Vest Start, Vest End, Price, Strike, Employee. Strike is required to value ISO / NSO awards (intrinsic value)."
           >
             <div className="flex flex-wrap items-center gap-2 text-xs">
               <button
@@ -788,13 +788,20 @@ export default function RetirementVestingView() {
                     <th scope="col" className="py-2 pr-2 font-medium uppercase tracking-[0.14em]">
                       Price
                     </th>
+                    <th
+                      scope="col"
+                      className="py-2 pr-2 font-medium uppercase tracking-[0.14em]"
+                      title="Strike / exercise price. Required for ISO/NSO valuation; ignored for RSU/PSU/RSA."
+                    >
+                      Strike
+                    </th>
                     <th scope="col" className="py-2"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {awards.length === 0 ? (
                     <tr>
-                      <td colSpan={9} className="py-3 text-center text-[11px]" style={{ color: "var(--muted)" }}>
+                      <td colSpan={10} className="py-3 text-center text-[11px]" style={{ color: "var(--muted)" }}>
                         No awards yet. Use Add award, Upload CSV, or Load sample.
                       </td>
                     </tr>
@@ -879,10 +886,25 @@ export default function RetirementVestingView() {
                             value={a.pricePerShare?.toString() ?? ""}
                             onChange={(v) =>
                               updateAward(i, {
-                                pricePerShare: v ? Number(v) : undefined,
+                                pricePerShare: safeOptionalNumber(v),
                               })
                             }
                             placeholder=""
+                          />
+                        </td>
+                        <td className="py-1.5 pr-2">
+                          <CellInput
+                            value={a.strike?.toString() ?? ""}
+                            onChange={(v) =>
+                              updateAward(i, {
+                                strike: safeOptionalNumber(v),
+                              })
+                            }
+                            placeholder={
+                              a.awardType === "ISO" || a.awardType === "NSO"
+                                ? "required"
+                                : "—"
+                            }
                           />
                         </td>
                         <td className="py-1.5">
@@ -910,20 +932,34 @@ export default function RetirementVestingView() {
           <CardSection title="Eligibility">
             <div className="grid grid-cols-2 gap-3 text-sm">
               <Metric
-                label="Eligible at evaluation"
-                value={analysis.eligibility.eligible ? "Yes" : "No"}
+                label={
+                  analysis.eligibility.variesByAward
+                    ? "Varies by award"
+                    : "Eligible at evaluation"
+                }
+                value={
+                  analysis.eligibility.variesByAward
+                    ? "See per-award"
+                    : analysis.eligibility.eligible
+                      ? "Yes"
+                      : "No"
+                }
               />
               <Metric
-                label="Evaluated at"
+                label={
+                  analysis.eligibility.variesByAward
+                    ? "At retirement date"
+                    : "Evaluated at"
+                }
                 value={analysis.eligibility.evaluatedAt || "—"}
               />
               <Metric
                 label="Age at check"
-                value={`${analysis.eligibility.ageAtCheck.toFixed(1)} yrs`}
+                value={`${analysis.eligibility.ageAtCheck} yrs`}
               />
               <Metric
                 label="Service at check"
-                value={`${analysis.eligibility.serviceYearsAtCheck.toFixed(1)} yrs`}
+                value={`${analysis.eligibility.serviceYearsAtCheck} yrs`}
               />
             </div>
             <p
@@ -1187,7 +1223,13 @@ function NumberInput({
         const cleaned = allowDecimal
           ? e.target.value.replace(/[^\d.]/g, "")
           : e.target.value.replace(/[^\d]/g, "");
-        onChange(cleaned === "" ? 0 : Number(cleaned));
+        if (cleaned === "") {
+          onChange(0);
+          return;
+        }
+        const n = Number(cleaned);
+        // Guard against "1.2.3" or lone "." producing NaN.
+        onChange(Number.isFinite(n) ? n : 0);
       }}
       placeholder={placeholder ?? "0"}
       className="block w-full rounded-md border px-3 py-1.5 text-sm"
@@ -1344,7 +1386,22 @@ const STATUS_TONE: Record<AwardStatus, { bg: string; color: string }> = {
 
 function toNumber(s: string): number {
   const cleaned = s.replace(/[^\d]/g, "");
-  return cleaned === "" ? 0 : Number(cleaned);
+  if (cleaned === "") return 0;
+  const n = Number(cleaned);
+  return Number.isFinite(n) ? n : 0;
+}
+
+/**
+ * For optional numeric fields (price, strike). Returns undefined for
+ * empty input or any value that would coerce to NaN. Decimals allowed.
+ */
+function safeOptionalNumber(s: string): number | undefined {
+  const trimmed = s.trim();
+  if (!trimmed) return undefined;
+  const cleaned = trimmed.replace(/[^\d.]/g, "");
+  if (!cleaned || cleaned === ".") return undefined;
+  const n = Number(cleaned);
+  return Number.isFinite(n) ? n : undefined;
 }
 
 function resultsToCsv(results: AwardResult[]): string {

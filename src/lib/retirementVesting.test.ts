@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   analyzeAwards,
   checkEligibility,
+  completedYearsBetween,
   composeRetirementMemo,
   defaultPolicy,
   evaluateAward,
@@ -61,6 +62,45 @@ describe("yearsBetween", () => {
   });
 });
 
+describe("completedYearsBetween", () => {
+  it("day before anniversary returns N-1", () => {
+    const birth = parseISODate("1968-04-15")!;
+    const dayBefore = parseISODate("2026-04-14")!;
+    expect(completedYearsBetween(birth, dayBefore)).toBe(57);
+  });
+
+  it("day of anniversary returns N", () => {
+    const birth = parseISODate("1968-04-15")!;
+    const dayOf = parseISODate("2026-04-15")!;
+    expect(completedYearsBetween(birth, dayOf)).toBe(58);
+  });
+
+  it("day after anniversary still returns N", () => {
+    const birth = parseISODate("1968-04-15")!;
+    const dayAfter = parseISODate("2026-04-16")!;
+    expect(completedYearsBetween(birth, dayAfter)).toBe(58);
+  });
+
+  it("returns 0 when 'to' is before 'from'", () => {
+    expect(
+      completedYearsBetween(
+        parseISODate("2025-01-01")!,
+        parseISODate("2024-01-01")!,
+      ),
+    ).toBe(0);
+  });
+
+  it("handles service-anniversary edges (Feb 29 hire)", () => {
+    const hire = parseISODate("2020-02-29")!;
+    // Non-leap year: anniversary is treated as Feb 28? No — getDate
+    // comparison: Feb 28 day=28 < hire day=29 → not yet completed.
+    // Feb 29 next leap year = anniversary. Mar 1 always counts.
+    expect(completedYearsBetween(hire, parseISODate("2021-02-28")!)).toBe(0);
+    expect(completedYearsBetween(hire, parseISODate("2021-03-01")!)).toBe(1);
+    expect(completedYearsBetween(hire, parseISODate("2024-02-29")!)).toBe(4);
+  });
+});
+
 describe("monthsBetween", () => {
   it("counts only completed months", () => {
     const a = parseISODate("2024-01-15")!;
@@ -104,6 +144,81 @@ describe("checkEligibility", () => {
     expect(result.eligible).toBe(true);
     expect(result.ageAtCheck).toBeGreaterThan(55);
     expect(result.serviceYearsAtCheck).toBeGreaterThan(15);
+  });
+
+  it("AGE: day before 55th birthday — not eligible (completed years)", () => {
+    const employee: EmployeeContext = {
+      birthDate: "1971-12-15",
+      hireDate: "2010-01-01",
+      retirementDate: "2026-12-14", // one day before 55th birthday
+    };
+    const policy: RetirementPolicy = {
+      ...defaultPolicy(),
+      eligibilityRule: { type: "AGE", ageThreshold: 55 },
+    };
+    const result = checkEligibility(employee, policy);
+    expect(result.eligible).toBe(false);
+    expect(result.ageAtCheck).toBe(54);
+  });
+
+  it("AGE: day of 55th birthday — eligible (completed years)", () => {
+    const employee: EmployeeContext = {
+      birthDate: "1971-12-15",
+      hireDate: "2010-01-01",
+      retirementDate: "2026-12-15", // 55th birthday
+    };
+    const policy: RetirementPolicy = {
+      ...defaultPolicy(),
+      eligibilityRule: { type: "AGE", ageThreshold: 55 },
+    };
+    const result = checkEligibility(employee, policy);
+    expect(result.eligible).toBe(true);
+    expect(result.ageAtCheck).toBe(55);
+  });
+
+  it("SERVICE: day before 10-year anniversary — not eligible", () => {
+    const employee: EmployeeContext = {
+      birthDate: "1965-01-01",
+      hireDate: "2017-03-15",
+      retirementDate: "2027-03-14",
+    };
+    const policy: RetirementPolicy = {
+      ...defaultPolicy(),
+      eligibilityRule: { type: "SERVICE", serviceThreshold: 10 },
+    };
+    const result = checkEligibility(employee, policy);
+    expect(result.eligible).toBe(false);
+    expect(result.serviceYearsAtCheck).toBe(9);
+  });
+
+  it("SERVICE: day of 10-year anniversary — eligible", () => {
+    const employee: EmployeeContext = {
+      birthDate: "1965-01-01",
+      hireDate: "2017-03-15",
+      retirementDate: "2027-03-15",
+    };
+    const policy: RetirementPolicy = {
+      ...defaultPolicy(),
+      eligibilityRule: { type: "SERVICE", serviceThreshold: 10 },
+    };
+    const result = checkEligibility(employee, policy);
+    expect(result.eligible).toBe(true);
+    expect(result.serviceYearsAtCheck).toBe(10);
+  });
+
+  it("SERVICE: day after 10-year anniversary — eligible", () => {
+    const employee: EmployeeContext = {
+      birthDate: "1965-01-01",
+      hireDate: "2017-03-15",
+      retirementDate: "2027-03-16",
+    };
+    const policy: RetirementPolicy = {
+      ...defaultPolicy(),
+      eligibilityRule: { type: "SERVICE", serviceThreshold: 10 },
+    };
+    const result = checkEligibility(employee, policy);
+    expect(result.eligible).toBe(true);
+    expect(result.serviceYearsAtCheck).toBe(10);
   });
 
   it("AGE_PLUS_SERVICE: not eligible if min age fails even when sum meets", () => {
@@ -396,40 +511,187 @@ describe("evaluateAward — exception cases (NEEDS_REVIEW)", () => {
   });
 });
 
-describe("evaluateAward — eligibility checked at GRANT_DATE", () => {
-  it("a grant where the employee was eligible at grant continues to be eligible at retirement", () => {
-    const policy: RetirementPolicy = {
-      ...defaultPolicy(),
-      eligibilityCheckAt: "GRANT_DATE",
-    };
-    // baseEmployee is 55+ at grant date 2024-02-15? Born 1968-04-15, so 55.8 yrs old in Feb 2024.
-    // Service 15.5 yrs at grant. Sum 71.3 ≥ 65. Min age 55 met. So eligible at grant.
-    const result = evaluateAward(baseAward, baseEmployee, policy);
-    expect(result.status).toBe("FULL_VESTING");
+describe("evaluateAward — option intrinsic value (P1.1)", () => {
+  const optionPolicy = (): RetirementPolicy => ({
+    ...defaultPolicy(),
+    treatments: { ...defaultPolicy().treatments, NSO: "FULL_VESTING" },
   });
 
-  it("a grant where the employee was NOT eligible at grant — forfeit even if eligible at retirement", () => {
+  it("ISO in-the-money: estimated value uses (price - strike) * shares", () => {
+    const award: Award = {
+      ...baseAward,
+      awardId: "ISO-ITM",
+      awardType: "ISO",
+      sharesGranted: 1000,
+      sharesVested: 250,
+      pricePerShare: 50,
+      strike: 20,
+    };
+    const policy: RetirementPolicy = {
+      ...defaultPolicy(),
+      treatments: { ...defaultPolicy().treatments, ISO: "FULL_VESTING" },
+    };
+    const result = evaluateAward(award, baseEmployee, policy);
+    // FULL_VESTING → all 1000 shares vested at retirement.
+    // Intrinsic = (50 - 20) * 1000 = 30000.
+    expect(result.estimatedValue).toBe(30_000);
+    expect(
+      result.exceptions.some((e) => e.toLowerCase().includes("strike")),
+    ).toBe(false);
+  });
+
+  it("NSO underwater (price <= strike): estimated value is 0, not negative", () => {
+    const award: Award = {
+      ...baseAward,
+      awardId: "NSO-UW",
+      awardType: "NSO",
+      sharesGranted: 2000,
+      sharesVested: 500,
+      pricePerShare: 30,
+      strike: 80,
+    };
+    const result = evaluateAward(award, baseEmployee, optionPolicy());
+    expect(result.estimatedValue).toBe(0);
+  });
+
+  it("ISO with missing strike: estimated value omitted + exception flagged", () => {
+    const award: Award = {
+      ...baseAward,
+      awardId: "ISO-NO-STRIKE",
+      awardType: "ISO",
+      sharesGranted: 1000,
+      sharesVested: 250,
+      pricePerShare: 50,
+      strike: undefined,
+    };
+    const policy: RetirementPolicy = {
+      ...defaultPolicy(),
+      treatments: { ...defaultPolicy().treatments, ISO: "FULL_VESTING" },
+    };
+    const result = evaluateAward(award, baseEmployee, policy);
+    expect(result.estimatedValue).toBeUndefined();
+    expect(
+      result.exceptions.some((e) => e.toLowerCase().includes("strike")),
+    ).toBe(true);
+  });
+
+  it("NSO with missing strike: never multiplies price * shares (no overstatement)", () => {
+    const award: Award = {
+      ...baseAward,
+      awardId: "NSO-NO-STRIKE",
+      awardType: "NSO",
+      sharesGranted: 5000,
+      sharesVested: 1000,
+      pricePerShare: 50,
+      strike: undefined,
+    };
+    const result = evaluateAward(award, baseEmployee, optionPolicy());
+    // Without my fix, this would have been 5000 * 50 = 250,000.
+    expect(result.estimatedValue).toBeUndefined();
+  });
+
+  it("RSU continues to use shares * price (no strike concept)", () => {
+    const award: Award = {
+      ...baseAward,
+      awardId: "RSU-VAL",
+      awardType: "RSU",
+      sharesGranted: 100,
+      sharesVested: 25,
+      pricePerShare: 50,
+      strike: undefined, // irrelevant for RSU
+    };
+    const result = evaluateAward(award, baseEmployee, defaultPolicy());
+    // FULL_VESTING for RSU → all 100 shares = 5000.
+    expect(result.estimatedValue).toBe(5_000);
+  });
+});
+
+describe("evaluateAward — eligibility checked at GRANT_DATE", () => {
+  it("eligible at grant: per-award treatment is the eligible treatment", () => {
     const policy: RetirementPolicy = {
       ...defaultPolicy(),
       eligibilityCheckAt: "GRANT_DATE",
-      eligibilityRule: { type: "AGE", ageThreshold: 60 },
     };
-    // baseEmployee is 55.8 at grant (2024-02), so under 60 even at grant.
-    // At retirement they are 58.7. Still under 60.
-    // Both fail → forfeit. But to test grant-only failure, need a case
-    // where they pass at retirement but fail at grant. Let me adjust.
+    // baseEmployee is 55 (completed) at grant date 2024-02-15 (born 1968-04-15;
+    // pre-birthday so 55 completed yrs). Service ~15 completed yrs.
+    // Sum 70 ≥ 65. Min age 55 met. → eligible at grant → full vesting.
+    const result = evaluateAward(baseAward, baseEmployee, policy);
+    expect(result.status).toBe("FULL_VESTING");
+    expect(result.reason.toLowerCase()).toContain("at grant date");
+  });
+
+  it("pass at retirement but fail at grant: forfeit (P1.3)", () => {
+    const policy: RetirementPolicy = {
+      ...defaultPolicy(),
+      eligibilityCheckAt: "GRANT_DATE",
+      eligibilityRule: { type: "AGE", ageThreshold: 55 },
+    };
+    // baseEmployee turns 56 in April 2024 (passes at retirement 2026-12-31).
+    // earlyAward grantDate 2020-01-01 → age completed 51 → fails at grant.
     const earlyAward: Award = {
       ...baseAward,
+      awardId: "EARLY-1",
       grantDate: "2020-01-01",
       vestStartDate: "2020-01-01",
       vestEndDate: "2024-01-01",
       sharesVested: 0,
       sharesGranted: 1000,
     };
-    // At grant 2020-01-01, age 51.7. Below 60. Not eligible at grant.
-    // Even if eligible at retirement, GRANT_DATE check forfeits.
     const result = evaluateAward(earlyAward, baseEmployee, policy);
     expect(result.status).toBe("FORFEITURE");
+    // The per-award reason cites the grant-date eligibility decision.
+    expect(result.reason.toLowerCase()).toContain("at grant date 2020-01-01");
+    expect(result.reason).toContain("age 51 < 55");
+  });
+
+  it("pass at grant: treatment is the eligible treatment even if rule grew stricter (sanity check)", () => {
+    // With our model, age/service are monotonically non-decreasing, so
+    // "pass at grant fail at retirement" via age/service alone isn't
+    // reachable. This test pins the behaviour we DO support: when
+    // eligibility passes at the grant-date check, the eligible
+    // treatment is what gets applied — regardless of any later
+    // recomputation of age/service.
+    const policy: RetirementPolicy = {
+      ...defaultPolicy(),
+      eligibilityCheckAt: "GRANT_DATE",
+      eligibilityRule: { type: "AGE", ageThreshold: 55 },
+    };
+    const grantOnBirthday: Award = {
+      ...baseAward,
+      awardId: "ON-BDAY",
+      grantDate: "2023-04-15", // employee turns 55 exactly today
+      vestStartDate: "2023-04-15",
+      vestEndDate: "2027-04-15",
+      sharesVested: 0,
+      sharesGranted: 1000,
+    };
+    const result = evaluateAward(grantOnBirthday, baseEmployee, policy);
+    expect(result.status).toBe("FULL_VESTING");
+    expect(result.reason).toContain("age 55 ≥ 55");
+  });
+
+  it("checkEligibility under GRANT_DATE returns variesByAward + dedicated reason", () => {
+    const policy: RetirementPolicy = {
+      ...defaultPolicy(),
+      eligibilityCheckAt: "GRANT_DATE",
+    };
+    const result = checkEligibility(baseEmployee, policy);
+    expect(result.variesByAward).toBe(true);
+    expect(result.reason.toLowerCase()).toContain("varies");
+    // Age/service still populated (retirement-date values for context).
+    expect(result.ageAtCheck).toBeGreaterThan(0);
+    expect(result.serviceYearsAtCheck).toBeGreaterThan(0);
+  });
+
+  it("memo under GRANT_DATE renders the variesByAward summary (P1.3)", () => {
+    const policy: RetirementPolicy = {
+      ...defaultPolicy(),
+      eligibilityCheckAt: "GRANT_DATE",
+    };
+    const analysis = analyzeAwards([baseAward], baseEmployee, policy);
+    const memo = composeRetirementMemo(analysis, baseEmployee, policy);
+    expect(memo.toLowerCase()).toContain("eligibility varies by award grant date");
+    expect(memo.toLowerCase()).toContain("context only");
   });
 });
 

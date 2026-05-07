@@ -160,9 +160,17 @@ export type EligibilityResult = {
   eligible: boolean;
   /** ISO YYYY-MM-DD when eligibility was evaluated. */
   evaluatedAt: string;
+  /** Completed integer years of age at the check date. */
   ageAtCheck: number;
+  /** Completed integer years of service at the check date. */
   serviceYearsAtCheck: number;
   reason: string;
+  /**
+   * True when policy.eligibilityCheckAt === "GRANT_DATE", in which
+   * case eligibility is evaluated per award. The fields above describe
+   * retirement-date eligibility for context only.
+   */
+  variesByAward?: boolean;
 };
 
 export type Analysis = {
@@ -209,11 +217,38 @@ export function parseISODate(s: string | undefined | null): Date | null {
 /**
  * Decimal years between two dates. Returns 0 if `to` is before `from`.
  * Uses 365.25 days per year to absorb leap years cleanly.
+ *
+ * NOTE: Eligibility comparisons MUST NOT use this — they use
+ * completedYearsBetween. Decimal years would treat someone the day
+ * before their 55th birthday as 54.997 years old, which is correct
+ * mathematically but legally that person turns 55 the next day, not
+ * today. Plans almost always read "age 55" as the completed year.
  */
 export function yearsBetween(from: Date, to: Date): number {
   const ms = to.getTime() - from.getTime();
   if (ms <= 0) return 0;
   return ms / (1000 * 60 * 60 * 24 * 365.25);
+}
+
+/**
+ * Exact completed years between `from` and `to`. Returns the integer
+ * count of full anniversaries reached. The day before the anniversary
+ * is N-1; the anniversary itself is N. Returns 0 if `to` <= `from`.
+ *
+ * Used for retirement eligibility thresholds where age 55 means the
+ * 55th birthday has been reached.
+ */
+export function completedYearsBetween(from: Date, to: Date): number {
+  if (to.getTime() <= from.getTime()) return 0;
+  let years = to.getFullYear() - from.getFullYear();
+  const monthDiff = to.getMonth() - from.getMonth();
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && to.getDate() < from.getDate())
+  ) {
+    years -= 1;
+  }
+  return Math.max(0, years);
 }
 
 /** Whole-month difference, used for vest-period calculations. */
@@ -237,13 +272,7 @@ export function checkEligibility(
   const birth = parseISODate(employee.birthDate);
   const hire = parseISODate(employee.hireDate);
   const retire = parseISODate(employee.retirementDate);
-  const evalDate =
-    policy.eligibilityCheckAt === "GRANT_DATE" ? null : retire;
-  // If checking at GRANT_DATE we need a per-award evaluation; this
-  // function returns retirement-date eligibility as the primary value
-  // and a per-award eligibility check is layered in evaluateAward.
-  const checkDate = evalDate ?? retire;
-  if (!birth || !hire || !checkDate) {
+  if (!birth || !hire || !retire) {
     return {
       eligible: false,
       evaluatedAt: employee.retirementDate || "",
@@ -253,25 +282,48 @@ export function checkEligibility(
         "Could not evaluate eligibility: birth date, hire date, or retirement date is missing or unparseable.",
     };
   }
-  const age = yearsBetween(birth, checkDate);
-  const service = yearsBetween(hire, checkDate);
-  const result = evaluateRule(age, service, policy.eligibilityRule);
+  // We always compute retirement-date eligibility for the summary
+  // panel. When the policy checks at GRANT_DATE, the per-award check
+  // happens inside evaluateAward and the global result carries
+  // variesByAward=true so the UI/memo can frame it correctly.
+  const ageAtRetirement = completedYearsBetween(birth, retire);
+  const serviceAtRetirement = completedYearsBetween(hire, retire);
+  const ruleResult = evaluateRule(
+    ageAtRetirement,
+    serviceAtRetirement,
+    policy.eligibilityRule,
+  );
+  if (policy.eligibilityCheckAt === "GRANT_DATE") {
+    return {
+      eligible: ruleResult.eligible,
+      evaluatedAt: formatISODate(retire),
+      ageAtCheck: ageAtRetirement,
+      serviceYearsAtCheck: serviceAtRetirement,
+      reason:
+        "Eligibility varies by award grant date. See per-award outcomes for the eligibility decision applied to each grant. Age and service shown above are at the retirement date for context only.",
+      variesByAward: true,
+    };
+  }
   return {
-    eligible: result.eligible,
-    evaluatedAt: formatISODate(checkDate),
-    ageAtCheck: age,
-    serviceYearsAtCheck: service,
-    reason: result.reason,
+    eligible: ruleResult.eligible,
+    evaluatedAt: formatISODate(retire),
+    ageAtCheck: ageAtRetirement,
+    serviceYearsAtCheck: serviceAtRetirement,
+    reason: ruleResult.reason,
   };
 }
 
+/**
+ * Evaluate an eligibility rule against COMPLETED integer years of age
+ * and service. Day before an anniversary is N-1; the anniversary is N.
+ * Threshold comparisons use these integers (not decimal years), so a
+ * "55+" rule fires on the 55th birthday, not the day before it.
+ */
 function evaluateRule(
   age: number,
   service: number,
   rule: EligibilityRule,
 ): { eligible: boolean; reason: string } {
-  const ageOneDecimal = age.toFixed(1);
-  const serviceOneDecimal = service.toFixed(1);
   switch (rule.type) {
     case "NONE":
       return {
@@ -283,8 +335,8 @@ function evaluateRule(
       return {
         eligible: ok,
         reason: ok
-          ? `Eligible: age ${ageOneDecimal} ≥ ${rule.ageThreshold}.`
-          : `Not eligible: age ${ageOneDecimal} < ${rule.ageThreshold}.`,
+          ? `Eligible: age ${age} ≥ ${rule.ageThreshold}.`
+          : `Not eligible: age ${age} < ${rule.ageThreshold}.`,
       };
     }
     case "SERVICE": {
@@ -292,8 +344,8 @@ function evaluateRule(
       return {
         eligible: ok,
         reason: ok
-          ? `Eligible: service ${serviceOneDecimal} yrs ≥ ${rule.serviceThreshold}.`
-          : `Not eligible: service ${serviceOneDecimal} yrs < ${rule.serviceThreshold}.`,
+          ? `Eligible: service ${service} yrs ≥ ${rule.serviceThreshold}.`
+          : `Not eligible: service ${service} yrs < ${rule.serviceThreshold}.`,
       };
     }
     case "AGE_AND_SERVICE": {
@@ -303,12 +355,12 @@ function evaluateRule(
       return {
         eligible: ok,
         reason: ok
-          ? `Eligible: age ${ageOneDecimal} ≥ ${rule.ageThreshold} AND service ${serviceOneDecimal} yrs ≥ ${rule.serviceThreshold}.`
+          ? `Eligible: age ${age} ≥ ${rule.ageThreshold} AND service ${service} yrs ≥ ${rule.serviceThreshold}.`
           : `Not eligible: ${
-              !ageOk ? `age ${ageOneDecimal} < ${rule.ageThreshold}` : ""
+              !ageOk ? `age ${age} < ${rule.ageThreshold}` : ""
             }${!ageOk && !serviceOk ? " and " : ""}${
               !serviceOk
-                ? `service ${serviceOneDecimal} yrs < ${rule.serviceThreshold}`
+                ? `service ${service} yrs < ${rule.serviceThreshold}`
                 : ""
             }.`,
       };
@@ -321,18 +373,17 @@ function evaluateRule(
         eligible: ok,
         reason: ok
           ? `Eligible: ${
-              ageOk ? `age ${ageOneDecimal} ≥ ${rule.ageThreshold}` : ""
+              ageOk ? `age ${age} ≥ ${rule.ageThreshold}` : ""
             }${ageOk && serviceOk ? " or " : ""}${
               serviceOk
-                ? `service ${serviceOneDecimal} yrs ≥ ${rule.serviceThreshold}`
+                ? `service ${service} yrs ≥ ${rule.serviceThreshold}`
                 : ""
             }.`
-          : `Not eligible: age ${ageOneDecimal} < ${rule.ageThreshold} and service ${serviceOneDecimal} yrs < ${rule.serviceThreshold}.`,
+          : `Not eligible: age ${age} < ${rule.ageThreshold} and service ${service} yrs < ${rule.serviceThreshold}.`,
       };
     }
     case "AGE_PLUS_SERVICE": {
       const sum = age + service;
-      const sumOneDecimal = sum.toFixed(1);
       const sumOk = sum >= rule.combinedThreshold;
       const minAgeOk = rule.minAge === undefined || age >= rule.minAge;
       const minServiceOk =
@@ -340,7 +391,7 @@ function evaluateRule(
       const ok = sumOk && minAgeOk && minServiceOk;
       const parts: string[] = [];
       parts.push(
-        `age ${ageOneDecimal} + service ${serviceOneDecimal} = ${sumOneDecimal} ${
+        `age ${age} + service ${service} = ${sum} ${
           sumOk ? "≥" : "<"
         } ${rule.combinedThreshold}`,
       );
@@ -363,6 +414,39 @@ function evaluateRule(
 }
 
 // ───────── Award evaluation ─────────
+
+/**
+ * Compute estimated value for a count of shares of a given award.
+ *
+ * - RSU/PSU/RSA/OTHER: shares * sharePrice (no strike concept).
+ * - ISO/NSO: max(0, sharePrice - strike) * shares (intrinsic value).
+ *   If strike is missing, returns undefined and pushes a NEEDS_REVIEW
+ *   exception — we never multiply price * shares for an option, since
+ *   that would massively overstate value.
+ * - Returns undefined if no price input.
+ *
+ * The exceptions array is mutated in place to carry the strike-missing
+ * flag back to the caller. Duplicate flags are deduped.
+ */
+function computeAwardValue(
+  award: Award,
+  shares: number,
+  price: number | undefined,
+  exceptions: string[],
+): number | undefined {
+  if (price === undefined) return undefined;
+  if (shares <= 0) return 0;
+  if (award.awardType === "ISO" || award.awardType === "NSO") {
+    if (award.strike === undefined) {
+      const msg = `Strike price is missing for ${award.awardType} award; estimated value omitted (intrinsic value cannot be computed without strike).`;
+      if (!exceptions.includes(msg)) exceptions.push(msg);
+      return undefined;
+    }
+    const intrinsic = price - award.strike;
+    return Math.max(0, intrinsic) * shares;
+  }
+  return shares * price;
+}
 
 /**
  * Evaluate a single award. The function is conservative: where data
@@ -411,8 +495,7 @@ export function evaluateAward(
     sharesVestingDueToRetirement: 0,
     sharesForfeited: 0,
     sharesContinuingToVest: 0,
-    estimatedValue:
-      price !== undefined ? sharesVested * price : undefined,
+    estimatedValue: computeAwardValue(award, sharesVested, price, exceptions),
     reason,
     exceptions,
   });
@@ -451,9 +534,13 @@ export function evaluateAward(
       "Employee birth date or hire date is missing or unparseable.",
     );
   }
-  const ageAt = yearsBetween(birth, eligibilityCheckDate);
-  const serviceAt = yearsBetween(hire, eligibilityCheckDate);
+  const ageAt = completedYearsBetween(birth, eligibilityCheckDate);
+  const serviceAt = completedYearsBetween(hire, eligibilityCheckDate);
   const elig = evaluateRule(ageAt, serviceAt, policy.eligibilityRule);
+  const eligPrefix =
+    policy.eligibilityCheckAt === "GRANT_DATE"
+      ? `At grant date ${award.grantDate}: ${elig.reason}`
+      : elig.reason;
 
   const treatment = elig.eligible
     ? policy.treatments[award.awardType]
@@ -464,22 +551,24 @@ export function evaluateAward(
       return {
         ...baseResult(
           "FULL_VESTING",
-          `${elig.reason} Policy treats ${award.awardType} as full vesting at retirement; ${sharesUnvested.toLocaleString()} unvested shares vest on ${employee.retirementDate}.`,
+          `${eligPrefix} Policy treats ${award.awardType} as full vesting at retirement; ${sharesUnvested.toLocaleString()} unvested shares vest on ${employee.retirementDate}.`,
         ),
         sharesVestingDueToRetirement: sharesUnvested,
         sharesForfeited: 0,
         sharesContinuingToVest: 0,
-        estimatedValue:
-          price !== undefined
-            ? (sharesVested + sharesUnvested) * price
-            : undefined,
+        estimatedValue: computeAwardValue(
+          award,
+          sharesVested + sharesUnvested,
+          price,
+          exceptions,
+        ),
       };
 
     case "FORFEITURE":
       return {
         ...baseResult(
           "FORFEITURE",
-          `${elig.reason} Policy forfeits unvested ${award.awardType} at retirement; ${sharesUnvested.toLocaleString()} shares forfeited.`,
+          `${eligPrefix} Policy forfeits unvested ${award.awardType} at retirement; ${sharesUnvested.toLocaleString()} shares forfeited.`,
         ),
         sharesVestingDueToRetirement: 0,
         sharesForfeited: sharesUnvested,
@@ -490,13 +579,13 @@ export function evaluateAward(
       return {
         ...baseResult(
           "CONTINUED_VESTING",
-          `${elig.reason} Policy continues original vesting schedule for ${award.awardType} after retirement; ${sharesUnvested.toLocaleString()} shares continue to vest per the original schedule.`,
+          `${eligPrefix} Policy continues original vesting schedule for ${award.awardType} after retirement; ${sharesUnvested.toLocaleString()} shares continue to vest per the original schedule.`,
         ),
         sharesVestingDueToRetirement: 0,
         sharesForfeited: 0,
         sharesContinuingToVest: sharesUnvested,
         // Continued-vesting shares are not yet "value" at retirement, so
-        // estimatedValue stays at sharesVested * price.
+        // estimatedValue stays at the already-vested intrinsic value.
       };
 
     case "PRO_RATA": {
@@ -513,7 +602,7 @@ export function evaluateAward(
         exceptions.push(proRata.exception);
         return baseResult(
           "NEEDS_REVIEW",
-          `${elig.reason} Pro-rata calculation could not be completed: ${proRata.exception}`,
+          `${eligPrefix} Pro-rata calculation could not be completed: ${proRata.exception}`,
         );
       }
       // Plans almost always honor at-least-already-vested. Cap at total
@@ -528,13 +617,17 @@ export function evaluateAward(
       return {
         ...baseResult(
           "PRO_RATA",
-          `${elig.reason} Pro-rata vesting (${(proRata.fraction * 100).toFixed(1)}% by ${proRataMethodLabel(policy.proRataMethod)}): ${additionalVesting.toLocaleString()} additional shares vest, ${forfeited.toLocaleString()} forfeit. Method honors at-least-already-vested, so a higher already-vested figure is preserved.`,
+          `${eligPrefix} Pro-rata vesting (${(proRata.fraction * 100).toFixed(1)}% by ${proRataMethodLabel(policy.proRataMethod)}): ${additionalVesting.toLocaleString()} additional shares vest, ${forfeited.toLocaleString()} forfeit. Method honors at-least-already-vested, so a higher already-vested figure is preserved.`,
         ),
         sharesVestingDueToRetirement: additionalVesting,
         sharesForfeited: forfeited,
         sharesContinuingToVest: 0,
-        estimatedValue:
-          price !== undefined ? effectivelyVested * price : undefined,
+        estimatedValue: computeAwardValue(
+          award,
+          effectivelyVested,
+          price,
+          exceptions,
+        ),
       };
     }
   }
@@ -709,16 +802,28 @@ export function composeRetirementMemo(
   lines.push("");
 
   lines.push("## Eligibility");
-  lines.push(
-    `- Evaluated at: ${analysis.eligibility.evaluatedAt}`,
-  );
-  lines.push(
-    `- Age at evaluation: ${analysis.eligibility.ageAtCheck.toFixed(1)} yrs`,
-  );
-  lines.push(
-    `- Service at evaluation: ${analysis.eligibility.serviceYearsAtCheck.toFixed(1)} yrs`,
-  );
-  lines.push(`- Outcome: ${analysis.eligibility.reason}`);
+  if (analysis.eligibility.variesByAward) {
+    lines.push(
+      "- Eligibility varies by award grant date. See per-award outcomes below for the eligibility decision applied to each grant.",
+    );
+    lines.push(
+      `- Age at retirement date (context only): ${analysis.eligibility.ageAtCheck} yrs`,
+    );
+    lines.push(
+      `- Service at retirement date (context only): ${analysis.eligibility.serviceYearsAtCheck} yrs`,
+    );
+  } else {
+    lines.push(
+      `- Evaluated at: ${analysis.eligibility.evaluatedAt}`,
+    );
+    lines.push(
+      `- Age at evaluation: ${analysis.eligibility.ageAtCheck} yrs`,
+    );
+    lines.push(
+      `- Service at evaluation: ${analysis.eligibility.serviceYearsAtCheck} yrs`,
+    );
+    lines.push(`- Outcome: ${analysis.eligibility.reason}`);
+  }
   lines.push("");
 
   lines.push("## Per-award outcomes");

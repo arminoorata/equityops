@@ -10,6 +10,12 @@ import type {
  * picked to surface every status type (FULL_VESTING, PRO_RATA,
  * FORFEITURE, ALREADY_FULLY_VESTED, NEEDS_REVIEW) so a first-time
  * visitor sees the full output flow.
+ *
+ * To produce FORFEITURE without making the employee ineligible
+ * overall, the policy treats ISO grants as FORFEITURE at retirement
+ * (a common real-world choice — ISO acceleration is rarer than RSU
+ * acceleration). NEEDS_REVIEW is produced by a PSU with a missing
+ * vest end date that runs into the pro-rata calculation.
  */
 export const SAMPLE_EMPLOYEE: EmployeeContext = {
   birthDate: "1968-04-15",
@@ -26,7 +32,7 @@ export const SAMPLE_POLICY: RetirementPolicy = {
   },
   eligibilityCheckAt: "RETIREMENT_DATE",
   treatments: {
-    ISO: "PRO_RATA",
+    ISO: "FORFEITURE",
     NSO: "PRO_RATA",
     RSU: "FULL_VESTING",
     PSU: "PRO_RATA",
@@ -38,6 +44,7 @@ export const SAMPLE_POLICY: RetirementPolicy = {
 };
 
 export const SAMPLE_AWARDS: Award[] = [
+  // FULL_VESTING — RSU under eligible policy.
   {
     awardId: "RSU-2023-001",
     awardType: "RSU",
@@ -58,6 +65,7 @@ export const SAMPLE_AWARDS: Award[] = [
     sharesVested: 800,
     pricePerShare: 50,
   },
+  // PRO_RATA — NSO with strike (intrinsic value used for valuation).
   {
     awardId: "NSO-2022-007",
     awardType: "NSO",
@@ -69,6 +77,7 @@ export const SAMPLE_AWARDS: Award[] = [
     pricePerShare: 50,
     strike: 22,
   },
+  // PRO_RATA — PSU with full schedule data.
   {
     awardId: "PSU-2025-003",
     awardType: "PSU",
@@ -79,6 +88,7 @@ export const SAMPLE_AWARDS: Award[] = [
     sharesVested: 0,
     pricePerShare: 50,
   },
+  // ALREADY_FULLY_VESTED — older RSU, fully vested before retirement.
   {
     awardId: "RSU-2019-099",
     awardType: "RSU",
@@ -87,6 +97,33 @@ export const SAMPLE_AWARDS: Award[] = [
     vestEndDate: "2023-04-01",
     sharesGranted: 2400,
     sharesVested: 2400,
+    pricePerShare: 50,
+  },
+  // FORFEITURE — ISO under a policy that does not accelerate ISOs at
+  // retirement. Demonstrates the FORFEITURE status without making the
+  // employee globally ineligible.
+  {
+    awardId: "ISO-2024-022",
+    awardType: "ISO",
+    grantDate: "2024-05-01",
+    vestStartDate: "2024-05-01",
+    vestEndDate: "2028-05-01",
+    sharesGranted: 1500,
+    sharesVested: 375,
+    pricePerShare: 50,
+    strike: 35,
+  },
+  // NEEDS_REVIEW — PSU with treatment PRO_RATA but missing vest end
+  // date. The pro-rata calculation cannot complete; the engine flags
+  // the row instead of guessing.
+  {
+    awardId: "PSU-2025-014",
+    awardType: "PSU",
+    grantDate: "2025-08-01",
+    vestStartDate: "2025-08-01",
+    vestEndDate: undefined,
+    sharesGranted: 900,
+    sharesVested: 0,
     pricePerShare: 50,
   },
 ];

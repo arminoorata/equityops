@@ -23,6 +23,35 @@ export type ImportResult = {
 
 // ───────── Header mapping ─────────
 
+/**
+ * Stock-admin exports often report unvested or unreleased shares
+ * instead of shares vested. We capture those columns separately and
+ * use them to derive sharesVested when sharesVested is absent:
+ *   sharesVested = sharesGranted - unvested
+ *
+ * NOTE: "Outstanding" headers are intentionally NOT mapped here.
+ * Across vendor exports, "outstanding" is ambiguous — for options it
+ * commonly means granted-but-not-exercised (which includes vested
+ * shares the holder hasn't exercised yet). Using it as "unvested"
+ * would silently understate sharesVested for options. Only explicit
+ * unvested / unreleased columns are safe to derive from.
+ *
+ * If a row has both an explicit "shares vested" value and an unvested
+ * column, the explicit value wins.
+ */
+type ExtraField = "sharesUnvested";
+const EXTRA_HEADER_VARIANTS: Record<ExtraField, string[]> = {
+  sharesUnvested: [
+    "shares unvested",
+    "unvested shares",
+    "unvested",
+    "qty unvested",
+    "shares unreleased",
+    "unreleased shares",
+    "unreleased",
+  ],
+};
+
 const HEADER_VARIANTS: Record<keyof Award, string[]> = {
   awardId: [
     "award id",
@@ -183,9 +212,11 @@ function normalizeHeader(s: string): string {
 
 function mapHeaders(headerRow: string[]): {
   index: Partial<Record<keyof Award, number>>;
+  extraIndex: Partial<Record<ExtraField, number>>;
   unmapped: string[];
 } {
   const index: Partial<Record<keyof Award, number>> = {};
+  const extraIndex: Partial<Record<ExtraField, number>> = {};
   const unmapped: string[] = [];
   headerRow.forEach((raw, i) => {
     const norm = normalizeHeader(raw);
@@ -204,9 +235,21 @@ function mapHeaders(headerRow: string[]): {
         break;
       }
     }
+    if (mapped) return;
+    for (const [field, variants] of Object.entries(EXTRA_HEADER_VARIANTS) as Array<
+      [ExtraField, string[]]
+    >) {
+      if (variants.includes(norm)) {
+        if (extraIndex[field] === undefined) {
+          extraIndex[field] = i;
+          mapped = true;
+        }
+        break;
+      }
+    }
     if (!mapped) unmapped.push(raw);
   });
-  return { index, unmapped };
+  return { index, extraIndex, unmapped };
 }
 
 function normalizeAwardType(raw: string): AwardType | null {
@@ -277,10 +320,16 @@ function coerceNumber(raw: string | undefined): number | undefined {
 function rowToAward(
   row: string[],
   index: Partial<Record<keyof Award, number>>,
+  extraIndex: Partial<Record<ExtraField, number>>,
   rowNumber: number,
 ): { award?: ParsedAward; error?: string } {
   const get = (field: keyof Award): string | undefined => {
     const i = index[field];
+    if (i === undefined) return undefined;
+    return row[i];
+  };
+  const getExtra = (field: ExtraField): string | undefined => {
+    const i = extraIndex[field];
     if (i === undefined) return undefined;
     return row[i];
   };
@@ -310,7 +359,18 @@ function rowToAward(
   const vestEndDate = coerceDate(get("vestEndDate"));
 
   const sharesGranted = coerceNumber(get("sharesGranted")) ?? 0;
-  const sharesVested = coerceNumber(get("sharesVested")) ?? 0;
+  const explicitVested = coerceNumber(get("sharesVested"));
+  const unvested = coerceNumber(getExtra("sharesUnvested"));
+  // Explicit vested wins. If absent, derive from sharesGranted - unvested.
+  // If neither is present, default to 0 (existing behaviour).
+  let sharesVested: number;
+  if (explicitVested !== undefined) {
+    sharesVested = explicitVested;
+  } else if (unvested !== undefined && sharesGranted > 0) {
+    sharesVested = Math.max(0, sharesGranted - unvested);
+  } else {
+    sharesVested = 0;
+  }
   const pricePerShare = coerceNumber(get("pricePerShare"));
   const strike = coerceNumber(get("strike"));
   const employeeId = get("employeeId")?.trim() || undefined;
@@ -341,16 +401,21 @@ export function importCsv(text: string): ImportResult {
     return { awards: [], errors: ["File is empty."], unmappedHeaders: [], rowCount: 0 };
   }
   const [headerRow, ...dataRows] = rows;
-  const { index, unmapped } = mapHeaders(headerRow);
+  const { index, extraIndex, unmapped } = mapHeaders(headerRow);
 
   const required: Array<keyof Award> = [
     "awardId",
     "awardType",
     "grantDate",
     "sharesGranted",
-    "sharesVested",
   ];
-  const missing = required.filter((r) => index[r] === undefined);
+  // sharesVested is satisfied either by an explicit column OR by an
+  // unvested/outstanding/unreleased column we can derive from.
+  const hasVestedSource =
+    index.sharesVested !== undefined ||
+    extraIndex.sharesUnvested !== undefined;
+  const missing: string[] = required.filter((r) => index[r] === undefined);
+  if (!hasVestedSource) missing.push("sharesVested (or unvested/outstanding)");
   if (missing.length > 0) {
     return {
       awards: [],
@@ -366,7 +431,7 @@ export function importCsv(text: string): ImportResult {
   const errors: string[] = [];
   dataRows.forEach((row, idx) => {
     if (row.every((c) => c.trim() === "")) return; // blank line
-    const { award, error } = rowToAward(row, index, idx + 2); // +2 for 1-indexed + header row
+    const { award, error } = rowToAward(row, index, extraIndex, idx + 2); // +2 for 1-indexed + header row
     if (error) errors.push(error);
     if (award) awards.push(award);
   });

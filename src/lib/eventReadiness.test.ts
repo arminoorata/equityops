@@ -4,6 +4,7 @@ import {
   formatDayOffset,
   generatePlan,
   labelEventType,
+  MISSING_EVENT_DATE_PLACEHOLDER,
   ownerName,
   parseISODate,
   phaseLabel,
@@ -134,9 +135,12 @@ describe("generatePlan — VESTING_CLIFF", () => {
     expect(t1?.scheduledDate).toBe("2026-06-16");
   });
 
-  it("returns empty scheduledDate when event date is missing", () => {
+  it("returns placeholder scheduledDate when event date is missing (P2.7)", () => {
     const plan = generatePlan({ ...baseInputs, eventDate: "" });
-    plan.checklist.forEach((i) => expect(i.scheduledDate).toBe(""));
+    expect(plan.eventDateValid).toBe(false);
+    plan.checklist.forEach((i) =>
+      expect(i.scheduledDate).toBe(MISSING_EVENT_DATE_PLACEHOLDER),
+    );
   });
 
   it("emails are generated and filter by stage", () => {
@@ -224,15 +228,59 @@ describe("edge cases", () => {
     expect(plan.memo).toContain("Vesting cliff event");
   });
 
-  it("invalid event date: scheduledDate is empty but plan still generates", () => {
+  it("invalid event date: plan still generates and uses placeholder (P2.7)", () => {
     const plan = generatePlan({
       ...defaultInputs(),
       eventType: "TENDER_OFFER",
       eventDate: "not-a-date",
       companyStage: "PRIVATE",
     });
+    expect(plan.eventDateValid).toBe(false);
     expect(plan.checklist.length).toBeGreaterThan(0);
-    plan.checklist.forEach((i) => expect(i.scheduledDate).toBe(""));
+    plan.checklist.forEach((i) =>
+      expect(i.scheduledDate).toBe(MISSING_EVENT_DATE_PLACEHOLDER),
+    );
+    // Memo carries a visible warning and uses the placeholder for Date.
+    expect(plan.memo).toContain(MISSING_EVENT_DATE_PLACEHOLDER);
+    expect(plan.memo.toLowerCase()).toContain("missing or unparseable");
+  });
+
+  it("valid event date: eventDateValid true and memo has no warning (P2.7)", () => {
+    const plan = generatePlan({
+      ...defaultInputs(),
+      eventDate: "2026-12-01",
+    });
+    expect(plan.eventDateValid).toBe(true);
+    expect(plan.memo).not.toContain(MISSING_EVENT_DATE_PLACEHOLDER);
+    expect(plan.memo.toLowerCase()).not.toContain("missing or unparseable");
+  });
+
+  it("empty notes render as visible '[notes/context]' placeholder in email body (P2.8)", () => {
+    const plan = generatePlan({
+      eventType: "VESTING_CLIFF",
+      eventDate: "2026-06-15",
+      companyStage: "PUBLIC",
+      eventName: "Test event",
+      notes: "",
+    });
+    const payrollEmail = plan.emails.find((e) => e.to === "PAYROLL");
+    expect(payrollEmail).toBeDefined();
+    expect(payrollEmail!.body).toContain("[notes/context]");
+    // And it should NOT leave a bare 'Notes: ' line.
+    expect(payrollEmail!.body).not.toMatch(/Notes:\s*$/m);
+  });
+
+  it("provided notes render verbatim (no placeholder leakage) (P2.8)", () => {
+    const plan = generatePlan({
+      eventType: "VESTING_CLIFF",
+      eventDate: "2026-06-15",
+      companyStage: "PUBLIC",
+      eventName: "Test event",
+      notes: "Watch for engineering cohort exposure",
+    });
+    const payrollEmail = plan.emails.find((e) => e.to === "PAYROLL");
+    expect(payrollEmail!.body).toContain("Watch for engineering cohort exposure");
+    expect(payrollEmail!.body).not.toContain("[notes/context]");
   });
 
   it("private-only items appear only when stage is PRIVATE (tender)", () => {

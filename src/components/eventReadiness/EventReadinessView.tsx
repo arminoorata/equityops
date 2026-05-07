@@ -171,6 +171,32 @@ export default function EventReadinessView() {
         </div>
       </div>
 
+      {!plan.eventDateValid && (
+        <div
+          role="alert"
+          data-testid="event-date-warning"
+          className="rounded-md border-l-4 px-4 py-3 text-sm leading-6"
+          style={{
+            borderColor: "var(--red, #d05a5a)",
+            borderLeftColor: "var(--red, #d05a5a)",
+            borderLeftWidth: 4,
+            background: "var(--surface)",
+            color: "var(--text)",
+          }}
+        >
+          <strong style={{ color: "var(--red, #d05a5a)" }}>
+            Event date is missing or unparseable.
+          </strong>{" "}
+          <span style={{ color: "var(--muted)" }}>
+            The countdown checklist and memo show
+            {" "}
+            <span className="font-mono">[set event date]</span>
+            {" "}
+            in place of scheduled dates until you fill in a valid date above.
+          </span>
+        </div>
+      )}
+
       <details
         className="rounded-md border p-4"
         style={{ borderColor: "var(--line)", background: "var(--surface)" }}

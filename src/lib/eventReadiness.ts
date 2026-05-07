@@ -92,7 +92,12 @@ export type EventPlan = {
   emails: CoordinationEmail[];
   /** Plain markdown memo for the equity / legal / payroll review thread. */
   memo: string;
+  /** True when inputs.eventDate parses to a valid YYYY-MM-DD. */
+  eventDateValid: boolean;
 };
+
+/** Placeholder used in checklist scheduledDate, memo, and CSV when the event date is missing. */
+export const MISSING_EVENT_DATE_PLACEHOLDER = "[set event date]";
 
 // ───────── Date utilities ─────────
 
@@ -159,10 +164,11 @@ export function ownerName(
  */
 export function generatePlan(inputs: EventInputs): EventPlan {
   const eventDate = parseISODate(inputs.eventDate);
+  const eventDateValid = eventDate !== null;
   const checklist = buildChecklist(inputs, eventDate);
   const emails = buildEmails(inputs);
-  const memo = composeMemo(inputs, checklist, emails);
-  return { inputs, checklist, emails, memo };
+  const memo = composeMemo(inputs, checklist, emails, eventDateValid);
+  return { inputs, checklist, emails, memo, eventDateValid };
 }
 
 function buildChecklist(
@@ -187,7 +193,7 @@ function buildChecklist(
       category: t.category,
       scheduledDate: eventDate
         ? formatISODate(shiftDays(eventDate, t.daysBeforeEvent))
-        : "",
+        : MISSING_EVENT_DATE_PLACEHOLDER,
     }))
     .sort((a, b) => a.daysBeforeEvent - b.daysBeforeEvent);
 }
@@ -218,7 +224,7 @@ function buildEmails(inputs: EventInputs): CoordinationEmail[] {
  */
 function fillTemplate(template: string, inputs: EventInputs): string {
   const eventName = inputs.eventName?.trim() || labelEventType(inputs.eventType);
-  const date = inputs.eventDate || "[event date]";
+  const date = inputs.eventDate?.trim() || MISSING_EVENT_DATE_PLACEHOLDER;
   const employees =
     inputs.estimatedAffectedEmployees !== undefined &&
     inputs.estimatedAffectedEmployees > 0
@@ -229,7 +235,10 @@ function fillTemplate(template: string, inputs: EventInputs): string {
     inputs.estimatedSharesAffected > 0
       ? inputs.estimatedSharesAffected.toLocaleString()
       : "[# shares affected]";
-  const notes = inputs.notes?.trim() || "";
+  // Empty notes render as a visible bracketed placeholder, matching
+  // the comment at the top of eventReadinessChecklists.ts that empty
+  // tokens fall through as placeholders the user can see.
+  const notes = inputs.notes?.trim() || "[notes/context]";
 
   return template
     .replace(/\{eventName\}/g, eventName)
@@ -246,6 +255,7 @@ function composeMemo(
   inputs: EventInputs,
   checklist: ChecklistItem[],
   emails: CoordinationEmail[],
+  eventDateValid: boolean,
 ): string {
   const lines: string[] = [];
   const eventName = inputs.eventName?.trim() || labelEventType(inputs.eventType);
@@ -256,9 +266,18 @@ function composeMemo(
   );
   lines.push("");
 
+  if (!eventDateValid) {
+    lines.push(
+      `> ⚠️ Event date is missing or unparseable. Scheduled dates show ${MISSING_EVENT_DATE_PLACEHOLDER} until you fill it in.`,
+    );
+    lines.push("");
+  }
+
   lines.push("## Event");
   lines.push(`- Type: ${labelEventType(inputs.eventType)}`);
-  lines.push(`- Date: ${inputs.eventDate || "[not set]"}`);
+  lines.push(
+    `- Date: ${eventDateValid ? inputs.eventDate : MISSING_EVENT_DATE_PLACEHOLDER}`,
+  );
   lines.push(
     `- Company stage: ${inputs.companyStage === "PUBLIC" ? "Public" : "Private"}`,
   );

@@ -26,6 +26,7 @@ One Next.js 16 + Tailwind 4 app, one subdomain, each tool as a route:
 
 - `/plan-health` — Stock Plan Health Check
 - `/retirement-vesting` — Retirement Vesting Impact Forecaster
+- `/event-readiness` — Equity Event Readiness Planner
 - additional routes ship per [`ROADMAP.md`](./ROADMAP.md)
 
 The existing standalone siblings (`equity.`, `fair.`, `flsa.`, `signs.`,
