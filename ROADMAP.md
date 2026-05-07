@@ -1,196 +1,153 @@
-# SBC Toolbox — Build Roadmap
+# Equity Ops Workbench — Build Roadmap
 
-Prioritized queue of tools to ship under a single sibling subdomain (working
-name `sbc.arminoorata.com` or `equityops.arminoorata.com`). The toolbox is
-the Next.js app; each tool is a route inside it (`/plan-health`,
-`/event-readiness`, etc.). See [`RESEARCH.md`](./RESEARCH.md) for the full
-landscape.
+Tools to ship as routes inside the workbench at `equityops.arminoorata.com`.
+See [`RESEARCH.md`](./RESEARCH.md) for the full landscape and
+[`README.md`](./README.md) for the project overview.
 
-> **Architecture decision (2026-04-30):** one subdomain with routed tools,
-> not one subdomain per tool. Easier to maintain, lower hosting overhead,
-> coherent toolbox feel. Existing siblings (FAIR, SIGNS, FLSA, EQUITY) keep
-> their own subdomains because they're standalone products with their own
-> identity. The toolbox is the home for *new* practitioner tools that share
-> a navigation and chrome.
+## Positioning lens
 
-## Ranking lens
+Assume the user is on Fidelity, Shareworks, Computershare, E*TRADE, or
+Carta as their system of record. **Build only tools that fill the gaps
+those platforms can't or don't fill, where practitioners currently use
+Excel.** Every tool's value proposition starts with: "your platform
+gives you X; this tool turns it into Y."
 
-A tool earns top-of-roadmap status when it scores well on all four:
+A tool earns Phase 1 status when it scores well on all four:
 
 1. **Stakeholder breadth** — junior + mid + senior, ideally
 2. **Cross-stage applicability** — private + public
-3. **Content moat** — Armi's 20 years of SBC practice show through in a way
+3. **Content moat** — Armi's 20 years of practice show through in a way
    a generic builder couldn't replicate
-4. **Demo strength** — value visible to a CHRO/CFO in 60 seconds
+4. **Demo strength** — the gap between vendor output and Excel deliverable
+   is visible in 60 seconds
 
 ---
 
 ## North star order
 
-1. **Stock Plan Health Check Lite** (Phase 1)
-2. **Equity Event Readiness Planner** (Phase 2)
-3. Hire Range Equity Calculator + queued items (Phase 3+)
+1. **Stock Plan Health Check** — live at `/plan-health`
+2. **Equity Event Readiness Planner** — Phase 2
+3. **Refresh Grant Sizing Tool** — Phase 3
+4. Strategic, narrative, and analytics gap-fillers — see categories below
 
-This order was set after a market check against Equilar (sells equity-plan
-analysis), ISS (proprietary EPSC framework changed in 2026), Mercer (2026
-ISS equity plan assessment guidance), Wealthlane and OptionTrax (vendor
-plan administration). The gap is the **board-ready narrative layer**, not
-another vendor calculator.
+The order picks tools that demonstrate the "above the vendor" framing
+clearly and serve senior-leader audiences first.
 
 ---
 
-## Phase 1 — Stock Plan Health Check Lite
+## Gap category 1: Strategic modeling
 
-The senior-leader-facing diagnostic. Inputs: shares granted last 3 years,
-shares outstanding, exercised, cancelled, share reserve, public/private
-status, plan structure flags. Outputs:
+**The vendor doesn't help you decide.** Stock administration platforms
+process transactions; they don't model "what if we changed refresh sizing
+by 10%" or "what if we added 200 hires to next year's plan."
 
-- **Burn rate** (3-year average and trailing year)
-- **Overhang** (total dilution from outstanding equity awards)
-- **Share reserve runway** (years remaining at current run-rate)
-- **Plan feature flags** (single-trigger acceleration, evergreen vs fixed
-  reserve, repricing without shareholder approval, share recycling
-  treatment, dividend equivalents on unvested equity)
-- **Questions to ask legal / finance** (a checklist of "if X, ask Y")
-- **Board memo draft** (plain-English narrative the user can paste into
-  Comp Committee pre-read)
-- **Disclaimer line:** "This is an educational health check, not an ISS,
-  Glass Lewis, or other proxy advisor model. Proprietary scoring frameworks
-  are not replicated here."
-
-### Why this first
-- **Stakeholder breadth:** primary user is senior leadership, but mid-level
-  practitioners use it for prep.
-- **Cross-stage:** mostly public + late-stage private; minimal private path.
-- **Content moat:** the *narrative* output (what to put in a board memo,
-  what questions to raise with legal) is where Armi's 20 years show through.
-  Numbers alone are commoditized; framing isn't.
-- **Demo strength:** one URL, structured inputs, board-ready output. A CHRO
-  or CFO sees the value immediately.
-
-### Anti-scope (deliberate omissions)
-- **No ISS / Glass Lewis score replication.** Their scoring methodologies
-  are proprietary, and the 2026 ISS Equity Plan Scorecard (EPSC) changed
-  the framework. Replicating either is a legal and accuracy risk. The tool
-  is *ISS-aware* in the sense that it surfaces the inputs ISS cares about,
-  but it does not output a score.
-- **No system-of-record integration.** Inputs are typed.
-- **No SOX or audit-trail features.** This is a thinking tool, not a
-  control.
-
-### Working title alternatives
-- **Stock Plan Health Check** (descriptive)
-- **Board-Ready Stock Plan Health Memo** (output-focused)
-- **ISS-Aware Stock Plan Readiness Check** (positioning-focused)
-
-Pick whichever Armi feels strongest about; the route name (`/plan-health`)
-stays stable regardless.
+| Tool | Phase | Audience | Stage | Vendor gap it fills |
+|---|---|---|---|---|
+| Refresh Grant Sizing Tool | 3 | Mid + Sr | Both | Multi-tier refresh logic, performance triggers, vest patterns. Today: Excel. |
+| Hire Range Equity Calculator | 3 | All | Both | Translate offer-letter $ value to share count given current FMV + dilution + 4-year expected value. Today: Excel. |
+| Plan Amendment Impact Modeler | 4 | Sr | Public | "What does adding evergreen do to overhang?" / "What does extending vest do to expense?" Today: custom Excel each time. |
+| Dilution Stress Tester | 4 | Sr | Both | "If we hire 200 more next year, what does overhang look like?" Vendor shows current state, not forward scenarios. |
+| M&A Retention Pool Modeler | 5 | Sr | Both | Acquisition retention pool sizing, conversion ratios, accelerated vesting. Always Excel today. |
 
 ---
 
-## Phase 2 — Equity Event Readiness Planner
+## Gap category 2: Narrative + memo layer
 
-Broadens the original Vesting Event Coordinator idea. Covers any
-significant equity event a TR team has to coordinate, not just routine
-vesting. Event types in scope:
+**The vendor generates numbers; you have to write the story.** Burn-rate
+reports come out of every platform. The board memo, the proxy CD&A, the
+plan-amendment justification, the question list for legal — those still
+get written by hand each quarter.
 
-- Vesting cliffs (1-year-cliff cohort hitting at scale)
-- Double-trigger RSU vesting at IPO
-- Tender offer windows (private secondary)
-- IPO lockup expiration
-- M&A acceleration (single-trigger, double-trigger, modified single)
-- Spin-off equity treatment
-- Plan termination / replacement events
-
-For each event type, the tool produces:
-
-- 30-day countdown checklist with task owners (TR, payroll, legal,
-  accounting, comms, IR)
-- One-sentence rationale per item explaining why it matters
-- Coordination email drafts to payroll, legal, comms with the right details
-- Stage-specific variants (private vs public, US vs international where
-  the rules diverge)
-- Export to .ics or markdown
-
-### Why second, not first
-- The senior-leader demo for Stock Plan Health Check is sharper for thought
-  leadership positioning.
-- Event Readiness is more visible to the TR community on social channels
-  but lower stakes per use.
-- Both tools share infrastructure (the Next.js shell), so building them in
-  sequence is efficient.
-
-### Differentiator vs Evan's tool
-- Multi-event-type taxonomy, not just vesting.
-- Stage-aware: private and public versions of the same event have different
-  checklists.
-- Generates the *coordination email* that payroll and legal actually need,
-  not a generic notification.
-- Free, public, and brand-aligned with Armi's other tools.
+| Tool | Phase | Audience | Stage | Vendor gap it fills |
+|---|---|---|---|---|
+| Stock Plan Health Check | **1 (live)** | Sr | Public + late-stage private | Numbers → board-ready memo + question list for legal/finance + plan-feature investor-lens commentary. |
+| Pay Ratio Narrative Drafter | 4 | Sr | Public | Section 953(b) + plain-English narrative. Pairs with ProxyMiner. |
+| Proxy CD&A Drafter | 5 | Sr | Public | Turn inputs into compliant CD&A draft. Vendor doesn't write narrative. |
+| Comp Committee Memo Builder | 4 | Sr | Public + late-stage private | Quarterly committee pre-read assembly from inputs. |
 
 ---
 
-## Phase 3 — queued
+## Gap category 3: Cross-functional coordination
 
-### Hire Range Equity Calculator
-Translate $ value into share counts given current FMV and vest pattern.
-Junior + mid daily workhorse. Pairs naturally with the Equity Portal.
-Audience: junior + mid. Stage: both. Demo: medium.
+**The vendor processes the event; you orchestrate the work around it.**
+Vest events, lockup expirations, IPOs, M&A acceleration, tender
+windows — each requires payroll, legal, accounting, IR, and comms to
+move in sequence. The vendor doesn't manage that.
 
-### Refresh Grant Sizing Tool
-Multi-tier refresh logic with performance triggers and vest patterns.
-Audience: mid + senior. Stage: both. Demo: medium.
-
-### IPO Readiness Checker
-Granting hygiene + plan structure + share reserve runway + double-trigger
-prep. Audience: senior. Stage: late-stage private. Demo: high (bursty).
-
-### 10b5-1 Plan Setup Helper
-Compliant with the 2023 Rule 10b5-1 amendments (cooling-off, single-plan
-limits, allowed amendments). Audience: mid + senior. Stage: public. Demo:
-high for newly public.
-
-### ASC 718 Expense Forecaster
-Black-Scholes + expected term + forfeiture rates → 4-year quarterly
-forecast. Audience: mid + senior + finance. Stage: both. Demo: medium
-(technical audience).
-
-### Pay Ratio Narrative Drafter
-Section 953(b) calculation + plain-English narrative for proxy. Pairs with
-ProxyMiner. Audience: senior. Stage: public. Demo: medium-high in season.
+| Tool | Phase | Audience | Stage | Vendor gap it fills |
+|---|---|---|---|---|
+| Equity Event Readiness Planner | **2** | Mid + Sr | Both | 30-day countdown checklist + coordination email drafts for cliffs, double-trigger RSUs, tender windows, IPO lockups, M&A acceleration, spin-offs. |
+| 10b5-1 Plan Setup Helper | 4 | Mid + Sr | Public | Cooling-off, allowed amendments per 2023 amendments. Vendor doesn't validate plan terms. |
+| IPO Readiness Checker | 5 | Sr | Pre-IPO | Granting hygiene, plan structure, share-reserve runway, double-trigger prep. End-to-end checklist. |
+| Tender Offer Coordinator | 5 | Mid + Sr | Private | Cross-functional checklist + comms templates. Vendor processes the transaction; doesn't manage the announcement. |
+| Lockup Expiration Communications Builder | 5 | Sr | Public | Employee comms + market-signaling considerations. Vendor doesn't draft language. |
 
 ---
 
-## Stretch / future
+## Gap category 4: Ad-hoc analytics
 
-- Equity Grant Distribution Auditor (pay equity for grants)
-- Section 16 / Form 4 Filing Tracker
-- Clawback Policy Builder (Rule 10D-1)
-- Tender Offer Coordinator (subset of Event Readiness)
-- Equity Plan Migration Modeler (option → RSU)
-- Pay-vs-Performance Table Builder (Dodd-Frank 953(a))
+**The vendor forces an Excel export for anything non-standard.** "Show
+me grants by level by year" or "what's the distribution of underwater
+options" or "stack the next year of vest events on a timeline" all start
+with a CSV download.
+
+| Tool | Phase | Audience | Stage | Vendor gap it fills |
+|---|---|---|---|---|
+| Grant Distribution Auditor | 4 | Mid + Sr | Both | Distribution by level, year, demographics. Vendor exports raw data; analytics are manual. |
+| Underwater Options Analyzer | 4 | Mid + Sr | Both | What % of outstanding options are underwater, by tranche and grant date. Useful before plan amendments and refresh decisions. |
+| Vest Stack Visualizer | 5 | Mid + Sr | Both | Upcoming vest events on a timeline, with cliff cohorts and double-trigger events called out. |
+| Refresh Multiple Tracker | 5 | Mid + Sr | Both | Refresh size relative to original new-hire grant, by employee, over time. |
+
+---
+
+## Gap category 5: Tax + AMT scenarios
+
+**The vendor records transactions; you model decisions.** Employees ask
+"should I exercise" — the vendor can't answer. Practitioners build
+custom Excel models for AMT exposure, ISO/NSO breakeven, multi-grant
+sequencing.
+
+| Tool | Phase | Audience | Stage | Vendor gap it fills |
+|---|---|---|---|---|
+| AMT Scenario Modeler | 4 | Mid + Sr | Both | Standalone version of the equity-portal AMT widget for TR-driven exec conversations. |
+| ISO Disqualifying Disposition Calculator | 5 | Mid + Sr | Both | Same-day cashless vs held-after-exercise tax outcomes. |
+| Multi-Grant Tax Sequencer | 5 | Mid + Sr | Both | "Which grant should I exercise first" given AMT, holding rules, expected sale. |
+| ASC 718 Expense Forecaster | 5 | Mid + Sr | Public | Black-Scholes + expected term + forfeiture → 4-year forecast. Vendor reports current period only. |
+
+---
+
+## Gap category 6: Communications + governance
+
+**The vendor doesn't draft language for humans.** Plan amendment
+shareholder letters, lockup expiration messaging, manager equity-
+education guides — all hand-written today.
+
+| Tool | Phase | Audience | Stage | Vendor gap it fills |
+|---|---|---|---|---|
+| Plan Doc Plain-English Translator | 5 | All | Both | Turn plan-doc legalese into employee-readable summary. |
+| Clawback Policy Builder (Rule 10D-1) | 5 | Sr | Public | Boilerplate-heavy; useful for newly-public companies. |
+| Manager Equity Education Pack | 5 | Mid + Sr | Both | Briefing pack for hiring managers on grant types, dilution, FMV, vest mechanics. |
 
 ---
 
 ## What we won't build (in this project)
 
-- System-of-record tooling (cap tables, ledgers).
+- System-of-record tooling (cap tables, ledgers, transaction processing).
 - Tax preparation or filing.
-- Personal financial advice for grantees (Equity Portal handles education).
-- Anything that ingests cap-table or payroll data (typed inputs only).
 - ISS / Glass Lewis score replication (proprietary, accuracy risk).
+- Anything that ingests cap-table or payroll data — typed inputs only.
+- Personal financial advice for grantees (the Equity Portal sibling
+  handles educational content).
 
 ---
 
 ## Decisions still open
 
-1. **Brand name for the toolbox.** Working: `sbc.arminoorata.com` or
-   `equityops.arminoorata.com`. Other options: `workbench`, `operator`,
-   `granted`, `vested`. Pick before scaffolding so the Next.js project
-   names + GitHub repo align.
-2. **Phase 1 working title.** Three candidates above; pick whichever feels
-   strongest in Armi's voice.
-3. **Scaffold timing.** Project foundation is in place. Next step: clone
-   `jobarchitecture/` as the Next.js + Tailwind 4 starting point, set up
-   the `/plan-health` route, and start the Stock Plan Health Check Lite
-   build.
+1. **First priority among Phase 3+ tools.** Refresh Grant Sizing has the
+   broadest immediate utility. Hire Range Equity Calculator pairs with
+   the Equity Portal nicely. Plan Amendment Impact Modeler has the
+   strongest senior-leader story.
+2. **GitHub + Vercel hookup** for `equityops.arminoorata.com`.
+3. **Branding evolution.** The brand identity can grow with the toolbox
+   (logo treatment, illustration of the "above the vendor" stack
+   metaphor). Currently using the eyebrow-only sibling pattern.

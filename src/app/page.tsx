@@ -10,16 +10,24 @@ export default function HomePage() {
         For SBC practitioners
       </p>
       <h1 className="mt-4 text-3xl font-medium tracking-tight md:text-5xl">
-        Practitioner tools for stock-based compensation.
+        The layer above Fidelity and Shareworks.
       </h1>
       <p
         className="mt-4 max-w-2xl text-base leading-7 md:text-lg md:leading-8"
         style={{ color: "var(--muted)" }}
       >
-        The orchestration layer between vendor platforms and the work TR teams
-        actually do. Diagnose plan health for the board. Plan an equity event
-        across payroll, legal, and accounting. Pressure-test refresh logic.
-        Free, public, no login.
+        Your stock administration platform is the system of record. It
+        processes vests, issues grants, and runs Form 4 filings. It does not
+        write the board memo, model the refresh, coordinate the cross-
+        functional event, draft the proxy narrative, or stress-test the plan
+        amendment. That work currently happens in Excel.
+      </p>
+      <p
+        className="mt-3 max-w-2xl text-base leading-7 md:text-lg md:leading-8"
+        style={{ color: "var(--muted)" }}
+      >
+        Equity Ops Workbench is the toolbox for the work between the export
+        and the deliverable. Free, public, no login.
       </p>
 
       <section className="mt-12">
@@ -32,7 +40,7 @@ export default function HomePage() {
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <ToolCard
             title="Stock Plan Health Check"
-            description="Generate a board-ready stock plan health memo from burn rate, overhang, share reserve runway, and plan feature inputs. ISS-aware, not an ISS score."
+            description="Turn the burn-rate / overhang / runway report your platform exports into a board-ready memo with the questions to ask legal and finance. ISS-aware, not an ISS score."
             href="/plan-health"
             audience="Heads of Total Rewards · Comp Committee prep"
             stage="Public + late-stage private"
@@ -40,7 +48,7 @@ export default function HomePage() {
           />
           <ToolCard
             title="Equity Event Readiness Planner"
-            description="30-day countdown checklist + coordination email drafts for vesting cliffs, double-trigger RSU events, tender windows, IPO lockups, M&A acceleration, and spin-offs."
+            description="30-day countdown checklist + coordination email drafts for vesting cliffs, double-trigger RSU events, tender windows, IPO lockups, M&A acceleration, and spin-offs. Your platform processes the event; this orchestrates the work around it."
             href="#"
             audience="TR managers · Equity ops"
             stage="Private + public"
@@ -55,19 +63,76 @@ export default function HomePage() {
           className="text-[11px] font-medium uppercase tracking-[0.18em]"
           style={{ color: "var(--text-secondary)" }}
         >
-          On the roadmap
+          Roadmap, organized by the gap each tool fills
         </p>
-        <ul
-          className="mt-4 grid grid-cols-1 gap-x-8 gap-y-2 text-sm md:grid-cols-2"
-          style={{ color: "var(--muted)" }}
-        >
-          <li>· Hire Range Equity Calculator</li>
-          <li>· Refresh Grant Sizing Tool</li>
-          <li>· IPO Readiness Checker</li>
-          <li>· 10b5-1 Plan Setup Helper</li>
-          <li>· ASC 718 Expense Forecaster</li>
-          <li>· Pay Ratio Narrative Drafter</li>
-        </ul>
+        <div className="mt-4 grid grid-cols-1 gap-x-8 gap-y-6 text-sm md:grid-cols-2">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: "var(--text)" }}>
+              Strategic modeling (vendors don&rsquo;t do this)
+            </p>
+            <ul className="mt-2 space-y-1" style={{ color: "var(--muted)" }}>
+              <li>· Refresh Grant Sizing Tool</li>
+              <li>· Hire Range Equity Calculator</li>
+              <li>· Plan Amendment Impact Modeler</li>
+              <li>· Dilution Stress Tester</li>
+              <li>· M&amp;A Retention Pool Modeler</li>
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: "var(--text)" }}>
+              Narrative + memo layer (vendors generate numbers, not stories)
+            </p>
+            <ul className="mt-2 space-y-1" style={{ color: "var(--muted)" }}>
+              <li>· Stock Plan Health Check (live)</li>
+              <li>· Pay Ratio Narrative Drafter</li>
+              <li>· Proxy CD&amp;A Drafter</li>
+              <li>· Comp Committee Memo Builder</li>
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: "var(--text)" }}>
+              Cross-functional coordination (vendors don&rsquo;t orchestrate)
+            </p>
+            <ul className="mt-2 space-y-1" style={{ color: "var(--muted)" }}>
+              <li>· Equity Event Readiness Planner</li>
+              <li>· 10b5-1 Plan Setup Helper</li>
+              <li>· IPO Readiness Checker</li>
+              <li>· Tender Offer Coordinator</li>
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: "var(--text)" }}>
+              Ad-hoc analytics (vendors force Excel exports)
+            </p>
+            <ul className="mt-2 space-y-1" style={{ color: "var(--muted)" }}>
+              <li>· Grant Distribution Auditor</li>
+              <li>· Underwater Options Analyzer</li>
+              <li>· Vest Stack Visualizer</li>
+              <li>· Refresh Multiple Tracker</li>
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: "var(--text)" }}>
+              Tax + AMT scenarios (vendors execute, don&rsquo;t model)
+            </p>
+            <ul className="mt-2 space-y-1" style={{ color: "var(--muted)" }}>
+              <li>· AMT Scenario Modeler</li>
+              <li>· ISO Disqualifying Disposition Calculator</li>
+              <li>· Multi-Grant Tax Sequencer</li>
+              <li>· ASC 718 Expense Forecaster</li>
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: "var(--text)" }}>
+              Communications + governance
+            </p>
+            <ul className="mt-2 space-y-1" style={{ color: "var(--muted)" }}>
+              <li>· Lockup Expiration Communications Builder</li>
+              <li>· Clawback Policy Builder (Rule 10D-1)</li>
+              <li>· Plan Doc Plain-English Translator</li>
+            </ul>
+          </div>
+        </div>
       </section>
 
       <section className="mt-12">

@@ -7,6 +7,25 @@ move the needle.
 Written from the viewpoint of a Fortune 50 SBC practitioner. Cited where
 possible to specific regulations, deliverables, and stakeholder expectations.
 
+## Operating assumption
+
+Every user already has a stock administration platform: Fidelity
+NetBenefits Stock Plan Services, Shareworks (Morgan Stanley at Work),
+Computershare, E*TRADE Equity Edge, or Carta for private companies. Those
+platforms own the system of record — they process vests, issue grants,
+generate Form 4 filings, run standard burn-rate / overhang reports, and
+host the employee self-service portal.
+
+**The workbench builds only tools that fill the gaps those platforms
+can't or don't fill, where the practitioner currently uses Excel.** Where
+the vendor's standard report or workflow already covers the job, the
+workbench does not duplicate it. The practitioner's job-to-be-done is
+"turn what comes out of the platform into the deliverable my CHRO/CFO/
+Comp Committee/employee/legal counterpart actually needs."
+
+Each tool's value proposition starts from this gap. See
+[`ROADMAP.md`](./ROADMAP.md) for the gap-organized build queue.
+
 ---
 
 ## Audience segments

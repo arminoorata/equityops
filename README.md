@@ -1,44 +1,45 @@
-# The SBC Toolbox
+# Equity Ops Workbench
 
-A free public hub of practitioner tools for stock-based compensation
-professionals. Junior to senior leadership. Private and public companies.
-Built and maintained by Armi Noorata as part of the AI-applied-to-Total-Rewards
-positioning.
+A free public toolbox of practitioner tools for stock-based compensation
+professionals at `equityops.arminoorata.com`. Junior to senior leadership.
+Private and public companies.
 
-> Working name. The brand may change before launch. Working subdomain
-> candidates: `sbc.arminoorata.com`, `equityops.arminoorata.com`. Other
-> options: `workbench`, `operator`, `granted`.
+## Positioning
 
-## What this is
+The user is on Fidelity, Shareworks, Computershare, E*TRADE, or Carta as
+their system of record. Those platforms process vests, issue grants, run
+Form 4 filings, and generate burn-rate / overhang reports. They do **not**
+write the board memo, model the refresh, coordinate the cross-functional
+equity event, draft the proxy narrative, audit grant distribution, stress-
+test plan amendments, or build the AMT scenario for an exec conversation.
+That work currently happens in Excel.
 
-Most SBC tools today are vendor platforms (Carta, Shareworks, Computershare,
-Fidelity, E*TRADE) that own the system of record. Equilar sells equity-plan
-analysis. ISS publishes the proprietary EPSC framework. Practitioners need
-lightweight, focused tools to *think* with — to model an offer, draft a
-board memo, audit a refresh cycle, walk an exec through AMT, or coordinate
-an equity event across payroll, legal, and accounting. The orchestration
-layer is the gap.
+**The workbench fills those gaps.** Every tool built here starts from a
+specific Excel pain point a practitioner has today. Every tool's value
+proposition reads: "your platform gives you X; this tool turns it into Y."
+Where the practitioner's vendor already covers the work cleanly, the
+workbench leaves it alone.
 
-The SBC Toolbox is one Next.js app at one subdomain, with each tool as a
-route inside it (`/plan-health`, `/event-readiness`, etc.). One catalog,
-one navigation, one chrome. Easier to maintain than five separate
-subdomains, and the toolbox feel is preserved.
+## Architecture
 
-The existing siblings (`fair.`, `signs.`, `flsa.`, `equity.`,
-`jobarchitecture.`) keep their own subdomains because they're standalone
-products with their own identity. The toolbox is the home for *new*
-practitioner tools that share infrastructure.
+One Next.js 16 + Tailwind 4 app, one subdomain, each tool as a route:
 
-## What lives here
+- `/plan-health` — Stock Plan Health Check (live)
+- `/event-readiness` — Equity Event Readiness Planner (Phase 2)
+- additional routes ship per `ROADMAP.md`
 
-- [`RESEARCH.md`](./RESEARCH.md) — the landscape: who SBC professionals are,
-  what jobs they do, what tools would help. Written from the viewpoint of a
-  Fortune 50 SBC practitioner. Source of truth for the catalog.
-- [`ROADMAP.md`](./ROADMAP.md) — the prioritized build queue. What ships first,
-  what is queued, what stays as a stretch idea. Updated as tools ship.
-- The Next.js app (not yet scaffolded) — a simple browseable index of tools
-  filtered by audience (junior / mid / senior), company stage (private /
-  public / both), and use case (modeling / process / governance / etc.).
+The existing standalone siblings (`equity.`, `fair.`, `flsa.`, `signs.`,
+`jobarchitecture.`) keep their own subdomains because they're products
+with their own identity. The workbench is the home for *new* tools
+specifically designed to fill vendor-platform gaps.
+
+## Repository layout
+
+- [`RESEARCH.md`](./RESEARCH.md) — landscape and audience analysis. Written
+  from the viewpoint of a Fortune 50 SBC practitioner.
+- [`ROADMAP.md`](./ROADMAP.md) — prioritized build queue, organized by which
+  vendor-platform gap each tool fills.
+- `src/` — the Next.js app (chrome, routes, pure-functional libs, tests).
 
 ## Cross-references
 

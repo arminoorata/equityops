@@ -154,6 +154,7 @@ export default function PlanHealthView() {
           <CardSection
             title="Burn rate inputs"
             hint="Gross shares granted in each fiscal year, paired with the weighted-average common shares outstanding for that year. Most recent year first."
+            sourceHint="Fidelity / Shareworks / Computershare: standard equity-grant summary report (or 'Grants by Period') for the share counts. WASO is on the cover page of your 10-Q / 10-K."
           >
             <Year3
               labelGrants="Annual gross grants"
@@ -168,6 +169,7 @@ export default function PlanHealthView() {
           <CardSection
             title="Overhang inputs"
             hint="Awards outstanding (unvested + vested-but-unexercised), shares left in the plan reserve, and total common shares outstanding on today's basis."
+            sourceHint="Fidelity / Shareworks: outstanding awards from the 'Plan Position' or 'Award Status Summary' report. Plan reserve from the 'Share Reserve' or 'Plan Capacity' view. Common shares outstanding from your latest 10-Q balance sheet."
           >
             <NumberField
               label="Awards outstanding"
@@ -189,6 +191,7 @@ export default function PlanHealthView() {
           <CardSection
             title="Plan feature flags"
             hint="Each flagged feature appears in the board memo with the investor lens explained. Inputs are typed; the model does not read your plan document."
+            sourceHint="These are not in any vendor report. They live in your plan document and any subsequent amendments. If you're not sure, ask legal or pull the most recent S-8 / 10-K plan filing."
           >
             <FeatureRow
               label="Single-trigger acceleration on change of control"
@@ -375,10 +378,12 @@ export default function PlanHealthView() {
 function CardSection({
   title,
   hint,
+  sourceHint,
   children,
 }: {
   title: string;
   hint?: string;
+  sourceHint?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -398,6 +403,24 @@ function CardSection({
           style={{ color: "var(--muted)" }}
         >
           {hint}
+        </p>
+      )}
+      {sourceHint && (
+        <p
+          className="mt-2 rounded-md border-l-2 px-3 py-1.5 text-[11px] leading-5"
+          style={{
+            borderLeftColor: "var(--accent)",
+            background: "var(--surface-alt)",
+            color: "var(--muted)",
+          }}
+        >
+          <span
+            className="font-semibold uppercase tracking-[0.14em]"
+            style={{ color: "var(--accent)" }}
+          >
+            Where to find this
+          </span>
+          <span className="ml-2 normal-case tracking-normal">{sourceHint}</span>
         </p>
       )}
       <div className="mt-4 space-y-3">{children}</div>

@@ -18,9 +18,12 @@ export default function PlanHealthPage() {
         className="mt-3 max-w-2xl text-base leading-7"
         style={{ color: "var(--muted)" }}
       >
-        Type in burn rate, overhang, runway, and plan feature inputs. The
-        diagnostic returns a Comp Committee-grade memo with the questions
-        worth asking legal and finance. ISS-aware. Not a proxy advisor model.
+        Your stock administration platform (Fidelity, Shareworks, Computershare,
+        E*TRADE) gives you the burn-rate, overhang, and reserve numbers as
+        standard reports. It does not write the board memo, flag the
+        investor-concern plan features, or hand you the questions to bring
+        to legal and finance. This tool does that. ISS-aware. Not a proxy
+        advisor model.
       </p>
       <div className="mt-10">
         <PlanHealthView />
