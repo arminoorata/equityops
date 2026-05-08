@@ -28,6 +28,7 @@ import {
   EXCEPTION_LABEL,
   FILING_STATUS_EXEMPTION_DEFAULTS,
   FILING_STATUS_LABEL,
+  FILING_STATUS_AMT_BRACKET_BREAKPOINT_DEFAULTS,
   FILING_STATUS_PHASEOUT_START_DEFAULTS,
   rowsToCsv,
   type AmtAssumptions,
@@ -118,6 +119,8 @@ export default function AmtScenarioView() {
       filingStatus: status,
       amtExemption: FILING_STATUS_EXEMPTION_DEFAULTS[status],
       exemptionPhaseoutStart: FILING_STATUS_PHASEOUT_START_DEFAULTS[status],
+      amtBracketBreakpoint:
+        FILING_STATUS_AMT_BRACKET_BREAKPOINT_DEFAULTS[status],
     }));
     setUsingSample(false);
   };

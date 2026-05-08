@@ -1,7 +1,7 @@
 /**
  * AMT Scenario Modeler engine. Pure functions only — no React, no
  * I/O, no AI. Models the AMT exposure of a proposed ISO exercise at a
- * planning level using the deterministic 2024/2025-style AMT formula
+ * planning level using the deterministic tax-year 2026 AMT formula
  * the user typically sees referenced in TR / equity-ops conversations.
  *
  * What this is NOT:
@@ -183,20 +183,31 @@ export const FILING_STATUS_LABEL: Record<FilingStatus, string> = {
   HEAD_OF_HOUSEHOLD: "Head of household",
 };
 
-/** Editable defaults; the user is expected to confirm against the latest IRS guidance. */
+/** Tax-year 2026 editable defaults from Rev. Proc. 2025-45 / IRS IRB 2025-45. */
 export const FILING_STATUS_EXEMPTION_DEFAULTS: Record<FilingStatus, number> = {
-  SINGLE: 88100,
-  MARRIED_JOINT: 137000,
-  MARRIED_SEPARATE: 68500,
-  HEAD_OF_HOUSEHOLD: 88100,
+  SINGLE: 90100,
+  MARRIED_JOINT: 140200,
+  MARRIED_SEPARATE: 70100,
+  HEAD_OF_HOUSEHOLD: 90100,
 };
 
-/** Editable defaults; the user is expected to confirm against the latest IRS guidance. */
+/** Tax-year 2026 editable defaults from Rev. Proc. 2025-45 / IRS IRB 2025-45. */
 export const FILING_STATUS_PHASEOUT_START_DEFAULTS: Record<FilingStatus, number> = {
-  SINGLE: 626350,
-  MARRIED_JOINT: 1252700,
-  MARRIED_SEPARATE: 626350,
-  HEAD_OF_HOUSEHOLD: 626350,
+  SINGLE: 500000,
+  MARRIED_JOINT: 1000000,
+  MARRIED_SEPARATE: 500000,
+  HEAD_OF_HOUSEHOLD: 500000,
+};
+
+/** Tax-year 2026 28% AMT breakpoint. Married filing separately uses half. */
+export const FILING_STATUS_AMT_BRACKET_BREAKPOINT_DEFAULTS: Record<
+  FilingStatus,
+  number
+> = {
+  SINGLE: 244500,
+  MARRIED_JOINT: 244500,
+  MARRIED_SEPARATE: 122250,
+  HEAD_OF_HOUSEHOLD: 244500,
 };
 
 export const EXCEPTION_LABEL: Record<AmtException, string> = {
@@ -215,7 +226,8 @@ export function defaultAmtAssumptions(): AmtAssumptions {
     exemptionPhaseoutStart:
       FILING_STATUS_PHASEOUT_START_DEFAULTS.MARRIED_JOINT,
     exemptionPhaseoutRate: 0.25,
-    amtBracketBreakpoint: 232600,
+    amtBracketBreakpoint:
+      FILING_STATUS_AMT_BRACKET_BREAKPOINT_DEFAULTS.MARRIED_JOINT,
     amtRateLow: 0.26,
     amtRateHigh: 0.28,
     effectiveRegularRate: 0.27,

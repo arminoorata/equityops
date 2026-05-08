@@ -6,6 +6,9 @@ import {
   defaultAmtAssumptions,
   defaultAmtSettings,
   evaluateGrant,
+  FILING_STATUS_AMT_BRACKET_BREAKPOINT_DEFAULTS,
+  FILING_STATUS_EXEMPTION_DEFAULTS,
+  FILING_STATUS_PHASEOUT_START_DEFAULTS,
   parseISODate,
   planningBreakevenShares,
   rowsToCsv,
@@ -36,6 +39,39 @@ const baseSettings = (): AmtSettings => ({
   asOfDate: "2026-05-08",
   fmvAsOfDate: "2026-04-01",
   staleFmvThresholdDays: 90,
+});
+
+describe("tax-year 2026 AMT defaults", () => {
+  it("ships current editable exemption defaults by filing status", () => {
+    expect(FILING_STATUS_EXEMPTION_DEFAULTS).toEqual({
+      SINGLE: 90100,
+      MARRIED_JOINT: 140200,
+      MARRIED_SEPARATE: 70100,
+      HEAD_OF_HOUSEHOLD: 90100,
+    });
+  });
+  it("ships current editable phaseout and bracket defaults by filing status", () => {
+    expect(FILING_STATUS_PHASEOUT_START_DEFAULTS).toEqual({
+      SINGLE: 500000,
+      MARRIED_JOINT: 1000000,
+      MARRIED_SEPARATE: 500000,
+      HEAD_OF_HOUSEHOLD: 500000,
+    });
+    expect(FILING_STATUS_AMT_BRACKET_BREAKPOINT_DEFAULTS).toEqual({
+      SINGLE: 244500,
+      MARRIED_JOINT: 244500,
+      MARRIED_SEPARATE: 122250,
+      HEAD_OF_HOUSEHOLD: 244500,
+    });
+  });
+  it("defaults the sample scenario to married filing jointly 2026 values", () => {
+    expect(defaultAmtAssumptions()).toMatchObject({
+      filingStatus: "MARRIED_JOINT",
+      amtExemption: 140200,
+      exemptionPhaseoutStart: 1000000,
+      amtBracketBreakpoint: 244500,
+    });
+  });
 });
 
 describe("evaluateGrant", () => {
@@ -85,29 +121,28 @@ describe("evaluateGrant", () => {
 
 describe("applyExemptionPhaseout", () => {
   it("returns the full exemption when AMTI is below the phaseout start", () => {
-    expect(applyExemptionPhaseout(100000, 137000, 1252700, 0.25)).toBe(137000);
+    expect(applyExemptionPhaseout(1000, 500, 2000, 0.25)).toBe(500);
   });
   it("phases out exemption at 25¢ per dollar above the start", () => {
-    // AMTI 1,452,700 → $200,000 over → $50,000 reduction → exemption $87,000
-    expect(applyExemptionPhaseout(1452700, 137000, 1252700, 0.25)).toBe(87000);
+    // AMTI 2,400 -> $400 over -> $100 reduction -> exemption $400.
+    expect(applyExemptionPhaseout(2400, 500, 2000, 0.25)).toBe(400);
   });
   it("clamps the exemption at zero (cannot go negative)", () => {
-    expect(applyExemptionPhaseout(10000000, 137000, 1252700, 0.25)).toBe(0);
+    expect(applyExemptionPhaseout(10000, 500, 2000, 0.25)).toBe(0);
   });
 });
 
 describe("tentativeMinimumTax", () => {
   it("returns 0 when AMTI-after-exemption is non-positive", () => {
-    expect(tentativeMinimumTax(0, 232600, 0.26, 0.28)).toBe(0);
-    expect(tentativeMinimumTax(-100, 232600, 0.26, 0.28)).toBe(0);
+    expect(tentativeMinimumTax(0, 100000, 0.26, 0.28)).toBe(0);
+    expect(tentativeMinimumTax(-100, 100000, 0.26, 0.28)).toBe(0);
   });
   it("uses the low rate up to the breakpoint", () => {
-    expect(tentativeMinimumTax(100000, 232600, 0.26, 0.28)).toBeCloseTo(26000, 5);
+    expect(tentativeMinimumTax(50000, 100000, 0.26, 0.28)).toBeCloseTo(13000, 5);
   });
   it("applies the high rate above the breakpoint", () => {
-    // 300000 → 232600 × 0.26 + (300000 - 232600) × 0.28
-    // = 60476 + 18872 = 79348
-    expect(tentativeMinimumTax(300000, 232600, 0.26, 0.28)).toBeCloseTo(79348, 5);
+    // 150000 -> 100000 x 0.26 + 50000 x 0.28 = 40000.
+    expect(tentativeMinimumTax(150000, 100000, 0.26, 0.28)).toBeCloseTo(40000, 5);
   });
 });
 
@@ -116,20 +151,20 @@ describe("planningBreakevenShares", () => {
     // Tiny bargain: strike 49, FMV 50, 100 shares → bargain = 100. Even
     // adding $100 to the AMTI proxy won't move TMT above the regular tax.
     const rows = [evaluateGrant(baseGrant({ strike: 49, proposedExerciseShares: 100 }))];
-    const r = planningBreakevenShares(rows, 350000, 137000, 1252700, 0.25, 232600, 0.26, 0.28, 0.27);
+    const r = planningBreakevenShares(rows, 350000, 140200, 1000000, 0.25, 244500, 0.26, 0.28, 0.27);
     expect(r.shares).toBe(100);
     expect(r.note).toMatch(/stays at \$0/);
   });
   it("returns zero when there is no bargain at all", () => {
     const rows = [evaluateGrant(baseGrant({ strike: 60, currentFmv: 50 }))];
-    const r = planningBreakevenShares(rows, 350000, 137000, 1252700, 0.25, 232600, 0.26, 0.28, 0.27);
+    const r = planningBreakevenShares(rows, 350000, 140200, 1000000, 0.25, 244500, 0.26, 0.28, 0.27);
     expect(r.shares).toBe(0);
     expect(r.note).toMatch(/No bargain element/);
   });
   it("reports zero and a flag when AMT exposure is positive at zero exercise", () => {
     // Push the regular rate to 0; ordinary income alone produces TMT > 0.
     const rows = [evaluateGrant(baseGrant())];
-    const r = planningBreakevenShares(rows, 350000, 137000, 1252700, 0.25, 232600, 0.26, 0.28, 0.0);
+    const r = planningBreakevenShares(rows, 350000, 140200, 1000000, 0.25, 244500, 0.26, 0.28, 0.0);
     expect(r.shares).toBe(0);
     expect(r.note).toMatch(/AMT exposure is already positive/);
   });
