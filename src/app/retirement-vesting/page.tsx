@@ -29,7 +29,7 @@ export default function RetirementVestingPage() {
         style={{ color: "var(--muted)" }}
       >
         Deterministic rules engine. No AI in the calculation path. Client-side
-        only — your CSV is read in your browser, lives in this tab&rsquo;s
+        only. Your CSV is read in your browser, lives in this tab&rsquo;s
         memory, and is gone the moment the tab closes.
       </p>
       <div className="mt-10">

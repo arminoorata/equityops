@@ -170,7 +170,7 @@ export default function HomePage() {
           />
           <BacklogColumn
             title="Cross-functional coordination"
-            why="Vendors process the event. The phased work that surrounds it — payroll, legal, IR, comms — happens elsewhere."
+            why="Vendors process the event. The phased work that surrounds it (payroll, legal, IR, comms) happens elsewhere."
             items={[
               "10b5-1 Plan Setup Helper",
               "IPO Readiness Checker",
@@ -224,7 +224,7 @@ export default function HomePage() {
             >
               equity.arminoorata.com
             </a>{" "}
-            — employee equity education
+            · employee equity education
           </li>
           <li>
             ·{" "}
@@ -235,7 +235,7 @@ export default function HomePage() {
             >
               fair.arminoorata.com
             </a>{" "}
-            — fair pay diagnostic
+            · fair pay diagnostic
           </li>
           <li>
             ·{" "}
@@ -246,7 +246,7 @@ export default function HomePage() {
             >
               flsa.arminoorata.com
             </a>{" "}
-            — FLSA classification
+            · FLSA classification
           </li>
           <li>
             ·{" "}
@@ -257,7 +257,7 @@ export default function HomePage() {
             >
               jobarchitecture.arminoorata.com
             </a>{" "}
-            — job architecture
+            · job architecture
           </li>
         </ul>
       </section>

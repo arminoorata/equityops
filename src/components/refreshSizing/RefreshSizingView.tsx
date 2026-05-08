@@ -319,7 +319,7 @@ export default function RefreshSizingView() {
       {/* How to use this in a refresh cycle. Compact, ordered, practitioner-targeted. */}
       <CardSection title="How to use this in a refresh cycle">
         <ol
-          className="grid grid-cols-1 gap-2 text-sm leading-6 md:grid-cols-5"
+          className="grid grid-cols-1 gap-2 text-sm leading-6 sm:grid-cols-2 lg:grid-cols-5"
           style={{ color: "var(--muted)" }}
         >
           <HowToStep
@@ -395,7 +395,7 @@ export default function RefreshSizingView() {
               <>
                 Your stock administration platform owns the source of truth
                 for grants, FMV, and outstanding awards. This tool sits above
-                that — it&rsquo;s the planning workbench between the export
+                that. It&rsquo;s the planning workbench between the export
                 and the comp committee pre-read.
               </>
             }
@@ -1736,7 +1736,7 @@ function describeMath(r: EmployeeRecommendation): string {
   const sharesPart =
     r.proposedShareCount !== undefined && r.fmvUsed !== undefined
       ? `${proposed} ÷ ${formatUSD(r.fmvUsed)} FMV = ${r.proposedShareCount.toLocaleString()} shares`
-      : `${proposed} (shares omitted — FMV missing)`;
+      : `${proposed} (shares omitted: FMV missing)`;
   const targetPart =
     r.guidelineTargetDollars !== undefined
       ? `target ${formatUSD(r.guidelineTargetDollars)} = ${r.level || "—"} × ${PERFORMANCE_TIER_LABEL[r.performanceTier]} guideline`

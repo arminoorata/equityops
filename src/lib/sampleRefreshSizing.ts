@@ -50,7 +50,10 @@ export const SAMPLE_ROWS: EmployeeRow[] = [
     performanceTier: "TOP",
     retentionRisk: "HIGH",
     criticalRoleFlag: true,
-    proposedRefreshDollars: 64000,
+    // 70k is above the L5 TOP upper band (66.5k) but inside the way-high
+    // threshold (1.5×). Demonstrates ABOVE_GUIDELINE + RETENTION_OVERRIDE
+    // — the band-breach with a documented justification.
+    proposedRefreshDollars: 70000,
     vestingPattern: "4yr 25/25/25/25",
     notes: "Lead on customer-data migration; replacement timeline 6+ months.",
   },
