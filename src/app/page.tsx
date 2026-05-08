@@ -80,6 +80,14 @@ export default function HomePage() {
             stage="Private + public"
             cta="Open the tool"
           />
+          <ToolCard
+            title="Grant Distribution Auditor"
+            description="Joins a grants outstanding export with HRIS fields and produces an audit view by level, function, country, grant year, award type, performance tier, and any optional demographic dimension. Concentration math, cohort outlier flags, audit memo for TR, DEIB, finance, legal, and the comp committee."
+            href="/grant-distribution"
+            audience="TR leaders · DEIB partners · Audit prep"
+            stage="Private + public"
+            cta="Open the auditor"
+          />
         </div>
       </section>
 
@@ -100,25 +108,7 @@ export default function HomePage() {
             current priority order.
           </p>
         </div>
-        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <ToolCard
-            title="Hire Range Equity Calculator"
-            description="Translate offer-letter dollar value to share count given current FMV, dilution, and 4-year expected value. The tool recruiters and TR partners reach for during every offer cycle."
-            href="#"
-            audience="Recruiters · TR partners · Hiring managers"
-            stage="Private + public"
-            cta="Designing"
-            status="Build next"
-          />
-          <ToolCard
-            title="Grant Distribution Auditor"
-            description="Distribution by level, year, country, and demographics from a grants outstanding export. The slice-and-dice your platform makes you do in Excel before any committee or DEIB conversation."
-            href="#"
-            audience="TR leaders · DEIB partners · Audit prep"
-            stage="Private + public"
-            cta="Scoping"
-            status="Build next"
-          />
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <ToolCard
             title="Underwater Options Analyzer"
             description="What share of outstanding options are underwater, by tranche and grant date. The pre-read for any plan-amendment or refresh decision in a depressed-stock environment."
@@ -126,6 +116,15 @@ export default function HomePage() {
             audience="TR leaders · Comp Committee prep · Plan amendment design"
             stage="Public"
             cta="Scoping"
+            status="Build next"
+          />
+          <ToolCard
+            title="Hire Range Equity Calculator"
+            description="Translate offer-letter dollar value to share count given current FMV, dilution, and 4-year expected value. The tool recruiters and TR partners reach for during every offer cycle."
+            href="#"
+            audience="Recruiters · TR partners · Hiring managers"
+            stage="Private + public"
+            cta="Designing"
             status="Build next"
           />
         </div>
