@@ -12,7 +12,7 @@ those platforms can't or don't fill, where practitioners currently use
 Excel.** Every tool's value proposition starts with: "your platform
 gives you X; this tool turns it into Y."
 
-A tool earns Phase 1 status when it scores well on all four:
+A tool earns "Build next" status when it scores well on all four:
 
 1. **Stakeholder breadth** — junior + mid + senior, ideally
 2. **Cross-stage applicability** — private + public
@@ -23,17 +23,26 @@ A tool earns Phase 1 status when it scores well on all four:
 
 ---
 
-## North star order
+## Status
 
+This roadmap is a prioritized backlog, not a delivery commitment. Tools
+ship one at a time. Quality bar is "would a Fortune 50 stock-based
+compensation leader put this in a comp-committee pre-read." If a tool
+does not clear that bar, it stays in the queue.
+
+### Available now
 1. **Stock Plan Health Check** — live at `/plan-health`
 2. **Retirement Vesting Impact Forecaster** — live at `/retirement-vesting`
 3. **Equity Event Readiness Planner** — live at `/event-readiness`
-4. **Refresh Grant Sizing Tool** — Phase 4 (next)
-5. **Hire Range Equity Calculator** — Phase 4
-6. Strategic, narrative, and analytics gap-fillers — see categories below
+4. **Refresh Grant Sizing Tool** — live at `/refresh-sizing`
 
-The order picks tools that demonstrate the "above the vendor" framing
-clearly and serve senior-leader audiences first.
+### Build next
+5. **Hire Range Equity Calculator** — `/hire-range` (next up)
+6. **Grant Distribution Auditor** — `/distribution-audit`
+
+### Backlog
+Everything below. Order and scope are not committed; categories below
+are organized by the vendor-platform gap each tool fills.
 
 ---
 
@@ -43,14 +52,14 @@ clearly and serve senior-leader audiences first.
 process transactions; they don't model "what if we changed refresh sizing
 by 10%" or "what if we added 200 hires to next year's plan."
 
-| Tool | Phase | Audience | Stage | Vendor gap it fills |
+| Tool | Status | Audience | Stage | Vendor gap it fills |
 |---|---|---|---|---|
-| Retirement Vesting Impact Forecaster | **2 (live)** | All | Both | Per-award status, shares vesting due to retirement, shares forfeited, memo for legal/payroll. Vendor shows current state; the "what happens at the retirement date" model lives in Excel. |
-| Refresh Grant Sizing Tool | 4 | Mid + Sr | Both | Multi-tier refresh logic, performance triggers, vest patterns. Today: Excel. |
-| Hire Range Equity Calculator | 4 | All | Both | Translate offer-letter $ value to share count given current FMV + dilution + 4-year expected value. Today: Excel. |
-| Plan Amendment Impact Modeler | 5 | Sr | Public | "What does adding evergreen do to overhang?" / "What does extending vest do to expense?" Today: custom Excel each time. |
-| Dilution Stress Tester | 5 | Sr | Both | "If we hire 200 more next year, what does overhang look like?" Vendor shows current state, not forward scenarios. |
-| M&A Retention Pool Modeler | 6 | Sr | Both | Acquisition retention pool sizing, conversion ratios, accelerated vesting. Always Excel today. |
+| Retirement Vesting Impact Forecaster | **Available now** | All | Both | Per-award status, shares vesting due to retirement, shares forfeited, memo for legal/payroll. Vendor shows current state; the "what happens at the retirement date" model lives in Excel. |
+| Refresh Grant Sizing Tool | **Available now** | Mid + Sr | Both | Multi-tier refresh logic, performance triggers, vest patterns, exception flags, executive memo. Today: Excel. |
+| Hire Range Equity Calculator | **Build next** | All | Both | Translate offer-letter $ value to share count given current FMV + dilution + 4-year expected value. Today: Excel. |
+| Plan Amendment Impact Modeler | Backlog | Sr | Public | "What does adding evergreen do to overhang?" / "What does extending vest do to expense?" Today: custom Excel each time. |
+| Dilution Stress Tester | Backlog | Sr | Both | "If we hire 200 more next year, what does overhang look like?" Vendor shows current state, not forward scenarios. |
+| M&A Retention Pool Modeler | Backlog | Sr | Both | Acquisition retention pool sizing, conversion ratios, accelerated vesting. Always Excel today. |
 
 ---
 
@@ -61,12 +70,12 @@ reports come out of every platform. The board memo, the proxy CD&A, the
 plan-amendment justification, the question list for legal — those still
 get written by hand each quarter.
 
-| Tool | Phase | Audience | Stage | Vendor gap it fills |
+| Tool | Status | Audience | Stage | Vendor gap it fills |
 |---|---|---|---|---|
-| Stock Plan Health Check | **1 (live)** | Sr | Public + late-stage private | Numbers → board-ready memo + question list for legal/finance + plan-feature investor-lens commentary. |
-| Pay Ratio Narrative Drafter | 4 | Sr | Public | Section 953(b) + plain-English narrative. Pairs with ProxyMiner. |
-| Proxy CD&A Drafter | 5 | Sr | Public | Turn inputs into compliant CD&A draft. Vendor doesn't write narrative. |
-| Comp Committee Memo Builder | 4 | Sr | Public + late-stage private | Quarterly committee pre-read assembly from inputs. |
+| Stock Plan Health Check | **Available now** | Sr | Public + late-stage private | Numbers → board-ready memo + question list for legal/finance + plan-feature investor-lens commentary. |
+| Pay Ratio Narrative Drafter | Backlog | Sr | Public | Section 953(b) + plain-English narrative. Pairs with ProxyMiner. |
+| Proxy CD&A Drafter | Backlog | Sr | Public | Turn inputs into compliant CD&A draft. Vendor doesn't write narrative. |
+| Comp Committee Memo Builder | Backlog | Sr | Public + late-stage private | Quarterly committee pre-read assembly from inputs. |
 
 ---
 
@@ -77,12 +86,12 @@ Vest events, lockup expirations, IPOs, M&A acceleration, tender
 windows — each requires payroll, legal, accounting, IR, and comms to
 move in sequence. The vendor doesn't manage that.
 
-| Tool | Phase | Audience | Stage | Vendor gap it fills |
+| Tool | Status | Audience | Stage | Vendor gap it fills |
 |---|---|---|---|---|
-| Equity Event Readiness Planner | **3 (live)** | Mid + Sr | Both | Phased countdown checklist + coordination email drafts for cliffs, double-trigger RSUs at IPO, tender offers, IPO lockup expirations, M&A acceleration, spin-offs, and plan terminations. Stage-aware. |
-| 10b5-1 Plan Setup Helper | 5 | Mid + Sr | Public | Cooling-off, allowed amendments per 2023 amendments. Vendor doesn't validate plan terms. |
-| IPO Readiness Checker | 6 | Sr | Pre-IPO | Granting hygiene, plan structure, share-reserve runway, double-trigger prep. End-to-end checklist. |
-| Lockup Expiration Communications Builder | 6 | Sr | Public | Employee comms + market-signaling considerations. Vendor doesn't draft language. (Note: covered as a sub-event in the Event Readiness Planner; this would be a deeper standalone.) |
+| Equity Event Readiness Planner | **Available now** | Mid + Sr | Both | Phased countdown checklist + coordination email drafts for cliffs, double-trigger RSUs at IPO, tender offers, IPO lockup expirations, M&A acceleration, spin-offs, and plan terminations. Stage-aware. |
+| 10b5-1 Plan Setup Helper | Backlog | Mid + Sr | Public | Cooling-off, allowed amendments per 2023 amendments. Vendor doesn't validate plan terms. |
+| IPO Readiness Checker | Backlog | Sr | Pre-IPO | Granting hygiene, plan structure, share-reserve runway, double-trigger prep. End-to-end checklist. |
+| Lockup Expiration Communications Builder | Backlog | Sr | Public | Employee comms + market-signaling considerations. Vendor doesn't draft language. (Note: covered as a sub-event in the Event Readiness Planner; this would be a deeper standalone.) |
 
 ---
 
@@ -93,12 +102,12 @@ me grants by level by year" or "what's the distribution of underwater
 options" or "stack the next year of vest events on a timeline" all start
 with a CSV download.
 
-| Tool | Phase | Audience | Stage | Vendor gap it fills |
+| Tool | Status | Audience | Stage | Vendor gap it fills |
 |---|---|---|---|---|
-| Grant Distribution Auditor | 4 | Mid + Sr | Both | Distribution by level, year, demographics. Vendor exports raw data; analytics are manual. |
-| Underwater Options Analyzer | 4 | Mid + Sr | Both | What % of outstanding options are underwater, by tranche and grant date. Useful before plan amendments and refresh decisions. |
-| Vest Stack Visualizer | 5 | Mid + Sr | Both | Upcoming vest events on a timeline, with cliff cohorts and double-trigger events called out. |
-| Refresh Multiple Tracker | 5 | Mid + Sr | Both | Refresh size relative to original new-hire grant, by employee, over time. |
+| Grant Distribution Auditor | **Build next** | Mid + Sr | Both | Distribution by level, year, country, demographics. Vendor exports raw data; analytics are manual. |
+| Underwater Options Analyzer | Backlog | Mid + Sr | Both | What % of outstanding options are underwater, by tranche and grant date. Useful before plan amendments and refresh decisions. |
+| Vest Stack Visualizer | Backlog | Mid + Sr | Both | Upcoming vest events on a timeline, with cliff cohorts and double-trigger events called out. |
+| Refresh Multiple Tracker | Backlog | Mid + Sr | Both | Refresh size relative to original new-hire grant, by employee, over time. |
 
 ---
 
@@ -109,12 +118,12 @@ with a CSV download.
 custom Excel models for AMT exposure, ISO/NSO breakeven, multi-grant
 sequencing.
 
-| Tool | Phase | Audience | Stage | Vendor gap it fills |
+| Tool | Status | Audience | Stage | Vendor gap it fills |
 |---|---|---|---|---|
-| AMT Scenario Modeler | 4 | Mid + Sr | Both | Standalone version of the equity-portal AMT widget for TR-driven exec conversations. |
-| ISO Disqualifying Disposition Calculator | 5 | Mid + Sr | Both | Same-day cashless vs held-after-exercise tax outcomes. |
-| Multi-Grant Tax Sequencer | 5 | Mid + Sr | Both | "Which grant should I exercise first" given AMT, holding rules, expected sale. |
-| ASC 718 Expense Forecaster | 5 | Mid + Sr | Public | Black-Scholes + expected term + forfeiture → 4-year forecast. Vendor reports current period only. |
+| AMT Scenario Modeler | Backlog | Mid + Sr | Both | Standalone version of the equity-portal AMT widget for TR-driven exec conversations. |
+| ISO Disqualifying Disposition Calculator | Backlog | Mid + Sr | Both | Same-day cashless vs held-after-exercise tax outcomes. |
+| Multi-Grant Tax Sequencer | Backlog | Mid + Sr | Both | "Which grant should I exercise first" given AMT, holding rules, expected sale. |
+| ASC 718 Expense Forecaster | Backlog | Mid + Sr | Public | Black-Scholes + expected term + forfeiture → 4-year forecast. Vendor reports current period only. |
 
 ---
 
@@ -124,11 +133,11 @@ sequencing.
 shareholder letters, lockup expiration messaging, manager equity-
 education guides — all hand-written today.
 
-| Tool | Phase | Audience | Stage | Vendor gap it fills |
+| Tool | Status | Audience | Stage | Vendor gap it fills |
 |---|---|---|---|---|
-| Plan Doc Plain-English Translator | 5 | All | Both | Turn plan-doc legalese into employee-readable summary. |
-| Clawback Policy Builder (Rule 10D-1) | 5 | Sr | Public | Boilerplate-heavy; useful for newly-public companies. |
-| Manager Equity Education Pack | 5 | Mid + Sr | Both | Briefing pack for hiring managers on grant types, dilution, FMV, vest mechanics. |
+| Plan Doc Plain-English Translator | Backlog | All | Both | Turn plan-doc legalese into employee-readable summary. |
+| Clawback Policy Builder (Rule 10D-1) | Backlog | Sr | Public | Boilerplate-heavy; useful for newly-public companies. |
+| Manager Equity Education Pack | Backlog | Mid + Sr | Both | Briefing pack for hiring managers on grant types, dilution, FMV, vest mechanics. |
 
 ---
 
@@ -155,10 +164,11 @@ education guides — all hand-written today.
 
 ## Decisions still open
 
-1. **First priority among Phase 4 tools.** Refresh Grant Sizing has the
-   broadest immediate utility. Hire Range Equity Calculator pairs with
-   the Equity Portal nicely. Plan Amendment Impact Modeler has the
-   strongest senior-leader story.
+1. **Order between Hire Range Equity Calculator and Grant Distribution
+   Auditor.** Hire Range pairs with the Equity Portal sibling and has
+   recurring weekly demand. Distribution Auditor pairs with the Plan
+   Health Check and supports DEIB conversations. Currently sequenced
+   Hire Range first.
 2. **Branding evolution.** The brand identity can grow with the toolbox
    (logo treatment, illustration of the "above the vendor" stack
    metaphor). Currently using the eyebrow-only sibling pattern.

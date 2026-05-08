@@ -30,13 +30,23 @@ export default function HomePage() {
         and the deliverable. Free, public, no login.
       </p>
 
+      {/* ──────── Available now ──────── */}
       <section className="mt-12">
-        <p
-          className="text-[11px] font-medium uppercase tracking-[0.18em]"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          Available now
-        </p>
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <p
+            className="text-[11px] font-medium uppercase tracking-[0.18em]"
+            style={{ color: "var(--accent)" }}
+          >
+            Available now
+          </p>
+          <p
+            className="max-w-md text-[11px] leading-5"
+            style={{ color: "var(--muted)" }}
+          >
+            Built, tested, and live. Each tool starts from a vendor export and
+            ends with a deliverable a senior leader would put in a pre-read.
+          </p>
+        </div>
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <ToolCard
             title="Stock Plan Health Check"
@@ -65,80 +75,128 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ──────── Build next ──────── */}
       <section className="mt-12">
-        <p
-          className="text-[11px] font-medium uppercase tracking-[0.18em]"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          Roadmap, organized by the gap each tool fills
-        </p>
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <p
+            className="text-[11px] font-medium uppercase tracking-[0.18em]"
+            style={{ color: "var(--text)" }}
+          >
+            Build next
+          </p>
+          <p
+            className="max-w-md text-[11px] leading-5"
+            style={{ color: "var(--muted)" }}
+          >
+            Highest demand from practitioners. The next three tools the
+            workbench will ship, in this order. The first is live today.
+          </p>
+        </div>
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <ToolCard
+            title="Refresh Grant Sizing Tool"
+            description="Multi-tier refresh logic by level × performance tier. Translates dollars to share count at FMV, flags above/below-guideline rows and retention overrides, and produces a comp-committee-ready memo with budget summary and exception list."
+            href="/refresh-sizing"
+            audience="TR leaders · Comp consulting · Comp Committee prep"
+            stage="Private + public"
+            cta="Open the tool"
+            status="Live"
+          />
+          <ToolCard
+            title="Hire Range Equity Calculator"
+            description="Translate offer-letter dollar value to share count given current FMV, dilution, and 4-year expected value. The tool recruiters and TR partners reach for during every offer cycle."
+            href="#"
+            audience="Recruiters · TR partners · Hiring managers"
+            stage="Private + public"
+            cta="Designing"
+            status="Build next"
+          />
+          <ToolCard
+            title="Grant Distribution Auditor"
+            description="Distribution by level, year, country, and demographics from a grants outstanding export. The slice-and-dice your platform makes you do in Excel before any committee or DEIB conversation."
+            href="#"
+            audience="TR leaders · DEIB partners · Audit prep"
+            stage="Private + public"
+            cta="Scoping"
+            status="Build next"
+          />
+        </div>
+      </section>
+
+      {/* ──────── Backlog ──────── */}
+      <section className="mt-12">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <p
+            className="text-[11px] font-medium uppercase tracking-[0.18em]"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            Backlog
+          </p>
+          <p
+            className="max-w-md text-[11px] leading-5"
+            style={{ color: "var(--muted)" }}
+          >
+            Vetted ideas grouped by the vendor-platform gap they fill. Order
+            and scope are not committed. This is the roadmap, not a
+            commitment to ship every item.
+          </p>
+        </div>
         <div className="mt-4 grid grid-cols-1 gap-x-8 gap-y-6 text-sm md:grid-cols-2">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: "var(--text)" }}>
-              Strategic modeling (vendors don&rsquo;t do this)
-            </p>
-            <ul className="mt-2 space-y-1" style={{ color: "var(--muted)" }}>
-              <li>· Refresh Grant Sizing Tool</li>
-              <li>· Hire Range Equity Calculator</li>
-              <li>· Plan Amendment Impact Modeler</li>
-              <li>· Dilution Stress Tester</li>
-              <li>· M&amp;A Retention Pool Modeler</li>
-            </ul>
-          </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: "var(--text)" }}>
-              Narrative + memo layer (vendors generate numbers, not stories)
-            </p>
-            <ul className="mt-2 space-y-1" style={{ color: "var(--muted)" }}>
-              <li>· Stock Plan Health Check (live)</li>
-              <li>· Pay Ratio Narrative Drafter</li>
-              <li>· Proxy CD&amp;A Drafter</li>
-              <li>· Comp Committee Memo Builder</li>
-            </ul>
-          </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: "var(--text)" }}>
-              Cross-functional coordination (vendors don&rsquo;t orchestrate)
-            </p>
-            <ul className="mt-2 space-y-1" style={{ color: "var(--muted)" }}>
-              <li>· Equity Event Readiness Planner</li>
-              <li>· 10b5-1 Plan Setup Helper</li>
-              <li>· IPO Readiness Checker</li>
-              <li>· Tender Offer Coordinator</li>
-            </ul>
-          </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: "var(--text)" }}>
-              Ad-hoc analytics (vendors force Excel exports)
-            </p>
-            <ul className="mt-2 space-y-1" style={{ color: "var(--muted)" }}>
-              <li>· Grant Distribution Auditor</li>
-              <li>· Underwater Options Analyzer</li>
-              <li>· Vest Stack Visualizer</li>
-              <li>· Refresh Multiple Tracker</li>
-            </ul>
-          </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: "var(--text)" }}>
-              Tax + AMT scenarios (vendors execute, don&rsquo;t model)
-            </p>
-            <ul className="mt-2 space-y-1" style={{ color: "var(--muted)" }}>
-              <li>· AMT Scenario Modeler</li>
-              <li>· ISO Disqualifying Disposition Calculator</li>
-              <li>· Multi-Grant Tax Sequencer</li>
-              <li>· ASC 718 Expense Forecaster</li>
-            </ul>
-          </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.14em]" style={{ color: "var(--text)" }}>
-              Communications + governance
-            </p>
-            <ul className="mt-2 space-y-1" style={{ color: "var(--muted)" }}>
-              <li>· Lockup Expiration Communications Builder</li>
-              <li>· Clawback Policy Builder (Rule 10D-1)</li>
-              <li>· Plan Doc Plain-English Translator</li>
-            </ul>
-          </div>
+          <BacklogColumn
+            title="Strategic modeling"
+            why="Vendors process; they don’t model. These tools take a what-if and return a number."
+            items={[
+              "Plan Amendment Impact Modeler",
+              "Dilution Stress Tester",
+              "M&A Retention Pool Modeler",
+            ]}
+          />
+          <BacklogColumn
+            title="Narrative + memo layer"
+            why="Vendors generate numbers. The board memo, the proxy narrative, and the question list still get written by hand."
+            items={[
+              "Pay Ratio Narrative Drafter",
+              "Proxy CD&A Drafter",
+              "Comp Committee Memo Builder",
+            ]}
+          />
+          <BacklogColumn
+            title="Cross-functional coordination"
+            why="Vendors process the event. The phased work that surrounds it — payroll, legal, IR, comms — happens elsewhere."
+            items={[
+              "10b5-1 Plan Setup Helper",
+              "IPO Readiness Checker",
+              "Lockup Expiration Communications Builder",
+            ]}
+          />
+          <BacklogColumn
+            title="Ad-hoc analytics"
+            why="Vendors force an Excel export for anything non-standard. These pre-build the slices practitioners use most."
+            items={[
+              "Underwater Options Analyzer",
+              "Vest Stack Visualizer",
+              "Refresh Multiple Tracker",
+            ]}
+          />
+          <BacklogColumn
+            title="Tax + AMT scenarios"
+            why="Vendors record transactions; they don’t model decisions. These are the Excel models employees and execs ask TR for."
+            items={[
+              "AMT Scenario Modeler",
+              "ISO Disqualifying Disposition Calculator",
+              "Multi-Grant Tax Sequencer",
+              "ASC 718 Expense Forecaster",
+            ]}
+          />
+          <BacklogColumn
+            title="Communications + governance"
+            why="Vendors don’t draft language for humans. These bridge plan-doc legalese and the people who need to read it."
+            items={[
+              "Plan Doc Plain-English Translator",
+              "Clawback Policy Builder (Rule 10D-1)",
+              "Manager Equity Education Pack",
+            ]}
+          />
         </div>
       </section>
 
@@ -210,7 +268,7 @@ function ToolCard({
   audience,
   stage,
   cta,
-  comingSoon,
+  status,
 }: {
   title: string;
   description: string;
@@ -218,8 +276,13 @@ function ToolCard({
   audience: string;
   stage: string;
   cta: string;
-  comingSoon?: boolean;
+  /** Optional status chip: "Live", "Build next", "In progress". */
+  status?: string;
 }) {
+  const isLink = href !== "#";
+  const statusTone = status === "Live"
+    ? { background: "var(--accent-soft)", color: "var(--accent)" }
+    : { background: "var(--surface-alt)", color: "var(--muted)" };
   const inner = (
     <article
       className="flex h-full flex-col rounded-md border p-5"
@@ -230,16 +293,15 @@ function ToolCard({
     >
       <div className="flex items-start justify-between gap-3">
         <h2 className="text-lg font-medium tracking-tight">{title}</h2>
-        {comingSoon && (
+        {status && (
           <span
             className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider whitespace-nowrap"
             style={{
-              background: "var(--surface-alt)",
-              color: "var(--muted)",
+              ...statusTone,
               border: "1px solid var(--line)",
             }}
           >
-            In progress
+            {status}
           </span>
         )}
       </div>
@@ -262,18 +324,47 @@ function ToolCard({
       <p
         className="mt-4 text-sm font-medium"
         style={{
-          color: comingSoon ? "var(--muted)" : "var(--accent)",
+          color: isLink ? "var(--accent)" : "var(--muted)",
         }}
       >
-        {cta} {!comingSoon && "→"}
+        {cta} {isLink && "→"}
       </p>
     </article>
   );
 
-  if (comingSoon) return inner;
+  if (!isLink) return inner;
   return (
     <Link href={href} className="block transition-opacity hover:opacity-90">
       {inner}
     </Link>
+  );
+}
+
+function BacklogColumn({
+  title,
+  why,
+  items,
+}: {
+  title: string;
+  why: string;
+  items: string[];
+}) {
+  return (
+    <div>
+      <p
+        className="text-xs font-medium uppercase tracking-[0.14em]"
+        style={{ color: "var(--text)" }}
+      >
+        {title}
+      </p>
+      <p className="mt-1 text-[11px] leading-5" style={{ color: "var(--muted)" }}>
+        {why}
+      </p>
+      <ul className="mt-2 space-y-1" style={{ color: "var(--muted)" }}>
+        {items.map((item) => (
+          <li key={item}>· {item}</li>
+        ))}
+      </ul>
+    </div>
   );
 }
