@@ -27,6 +27,14 @@ One Next.js 16 + Tailwind 4 app, one subdomain, each tool as a route:
 - `/plan-health` — Stock Plan Health Check
 - `/retirement-vesting` — Retirement Vesting Impact Forecaster
 - `/event-readiness` — Equity Event Readiness Planner
+- `/refresh-sizing` — Refresh Grant Sizing Tool
+- `/grant-distribution` — Grant Distribution Auditor
+- `/underwater-options` — Underwater Options Analyzer
+- `/hire-range` — Hire Range Equity Calculator
+- `/amt-scenario` — AMT Scenario Modeler
+- `/asc-718-forecast` — ASC 718 Expense Forecaster
+- `/plan-amendment` — Plan Amendment Impact Modeler
+- `/comp-committee-memo` — Comp Committee Memo Builder
 - additional routes ship per [`ROADMAP.md`](./ROADMAP.md)
 
 The existing standalone siblings (`equity.`, `fair.`, `flsa.`, `signs.`,

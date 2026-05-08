@@ -38,15 +38,15 @@ does not clear that bar, it stays in the queue.
 5. **Grant Distribution Auditor** — live at `/grant-distribution`
 6. **Underwater Options Analyzer** — live at `/underwater-options`
 7. **Hire Range Equity Calculator** — live at `/hire-range`
+8. **AMT Scenario Modeler** — live at `/amt-scenario`
+9. **ASC 718 Expense Forecaster** — live at `/asc-718-forecast`
+10. **Plan Amendment Impact Modeler** — live at `/plan-amendment`
+11. **Comp Committee Memo Builder** — live at `/comp-committee-memo`
 
 ### Build next
-The seven highest-priority "above-the-vendor-platform" tools are now
-live. The next build sequence pulls from the Backlog categories below;
-order is not yet committed.
-
-### Backlog
-Everything below. Order and scope are not committed; categories below
-are organized by the vendor-platform gap each tool fills.
+Eleven tools live. The remaining backlog categories below are open;
+order and scope are not committed and several remaining items are
+deliberately one-off / niche.
 
 ---
 
@@ -61,7 +61,7 @@ by 10%" or "what if we added 200 hires to next year's plan."
 | Retirement Vesting Impact Forecaster | **Available now** | All | Both | Per-award status, shares vesting due to retirement, shares forfeited, memo for legal/payroll. Vendor shows current state; the "what happens at the retirement date" model lives in Excel. |
 | Refresh Grant Sizing Tool | **Available now** | Mid + Sr | Both | Multi-tier refresh logic, performance triggers, vest patterns, exception flags, executive memo. Today: Excel. |
 | Hire Range Equity Calculator | **Available now** | All | Both | Translates target equity value into a low / mid / high share range at FMV, builds a vesting schedule with annualized vest value, and produces a recruiter prep memo with ISO/NSO/RSU candidate-context talking points. |
-| Plan Amendment Impact Modeler | Backlog | Sr | Public | "What does adding evergreen do to overhang?" / "What does extending vest do to expense?" Today: custom Excel each time. |
+| Plan Amendment Impact Modeler | **Available now** | Sr | Public + late-stage private | Before/after on overhang, runway, and dilution; investor concern flags (high evergreen, large overhang increment, repricing without approval, asymmetric recycling, very short / very long runway); comp-committee memo with legal and finance question list. |
 | Dilution Stress Tester | Backlog | Sr | Both | "If we hire 200 more next year, what does overhang look like?" Vendor shows current state, not forward scenarios. |
 | M&A Retention Pool Modeler | Backlog | Sr | Both | Acquisition retention pool sizing, conversion ratios, accelerated vesting. Always Excel today. |
 
@@ -79,7 +79,7 @@ get written by hand each quarter.
 | Stock Plan Health Check | **Available now** | Sr | Public + late-stage private | Numbers → board-ready memo + question list for legal/finance + plan-feature investor-lens commentary. |
 | Pay Ratio Narrative Drafter | Backlog | Sr | Public | Section 953(b) + plain-English narrative. Pairs with ProxyMiner. |
 | Proxy CD&A Drafter | Backlog | Sr | Public | Turn inputs into compliant CD&A draft. Vendor doesn't write narrative. |
-| Comp Committee Memo Builder | Backlog | Sr | Public + late-stage private | Quarterly committee pre-read assembly from inputs. |
+| Comp Committee Memo Builder | **Available now** | Sr | All stages | Meta-tool: paste markdown summaries from the other workbench tools, add key metrics, risks, open questions, and recommended next steps; assembles a deterministic board-format pre-read with executive summary, decision requested, and disclaimer. |
 
 ---
 
@@ -124,10 +124,10 @@ sequencing.
 
 | Tool | Status | Audience | Stage | Vendor gap it fills |
 |---|---|---|---|---|
-| AMT Scenario Modeler | Backlog | Mid + Sr | Both | Standalone version of the equity-portal AMT widget for TR-driven exec conversations. |
+| AMT Scenario Modeler | **Available now** | Mid + Sr | Late-stage private + public | Bargain element by grant, regular tax vs tentative minimum tax math, AMT exposure, planning-grade breakeven share count, optional sale scenario. Editable filing-status-driven assumptions; deterministic engine; memo for the conversation with a qualified tax advisor. |
 | ISO Disqualifying Disposition Calculator | Backlog | Mid + Sr | Both | Same-day cashless vs held-after-exercise tax outcomes. |
 | Multi-Grant Tax Sequencer | Backlog | Mid + Sr | Both | "Which grant should I exercise first" given AMT, holding rules, expected sale. |
-| ASC 718 Expense Forecaster | Backlog | Mid + Sr | Public | Black-Scholes + expected term + forfeiture → 4-year forecast. Vendor reports current period only. |
+| ASC 718 Expense Forecaster | **Available now** | Mid + Sr | Public + late-stage private | Per-period bucketization (quarterly or annual), straight-line and graded vesting recognition, forfeiture and PSU probability assumptions, by-type and by-grant-year totals, accounting memo. Planning forecast; not GAAP-final. |
 
 ---
 

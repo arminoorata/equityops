@@ -104,6 +104,38 @@ export default function HomePage() {
             stage="Private + public"
             cta="Open the calculator"
           />
+          <ToolCard
+            title="AMT Scenario Modeler"
+            description="Plan-level ISO exercise math: bargain element by grant, regular tax vs tentative minimum tax, AMT exposure, breakeven share count, optional sale scenario. Editable assumptions; deterministic engine; memo for the conversation with a qualified tax advisor."
+            href="/amt-scenario"
+            audience="TR / equity ops · Equity holders prepping an exercise · Tax-advisor handoff"
+            stage="Late-stage private + public"
+            cta="Open the modeler"
+          />
+          <ToolCard
+            title="ASC 718 Expense Forecaster"
+            description="Forecast stock-based compensation expense by reporting period from a population of awards, grant-date fair values, vesting terms, forfeiture and PSU probability assumptions. Per-period bucket, by-type and by-year totals, accounting memo. Planning forecast; not GAAP-final."
+            href="/asc-718-forecast"
+            audience="TR · Stock-comp accounting · Finance · External auditor handoff"
+            stage="Public + late-stage private"
+            cta="Open the forecaster"
+          />
+          <ToolCard
+            title="Plan Amendment Impact Modeler"
+            description="Model how additional shares, evergreen, share recycling, and repricing posture affect overhang, runway, dilution, and the investor narrative. Investor concern flags (high evergreen, large overhang increment, repricing without approval). Comp-committee memo with legal and finance question list."
+            href="/plan-amendment"
+            audience="TR leaders · Comp committee · Legal · Finance · IR"
+            stage="Public + late-stage private"
+            cta="Open the modeler"
+          />
+          <ToolCard
+            title="Comp Committee Memo Builder"
+            description="The meta-tool. Paste the markdown summaries from the other workbench tools, add key metrics, risks, open questions, and recommended next steps, and assemble a deterministic board-format pre-read with executive summary, decision requested, and disclaimer."
+            href="/comp-committee-memo"
+            audience="Heads of TR / CHRO · Comp committee secretary · Pre-read assembly"
+            stage="All stages"
+            cta="Open the builder"
+          />
         </div>
       </section>
 
@@ -129,20 +161,12 @@ export default function HomePage() {
           <BacklogColumn
             title="Strategic modeling"
             why="Vendors process; they don’t model. These tools take a what-if and return a number."
-            items={[
-              "Plan Amendment Impact Modeler",
-              "Dilution Stress Tester",
-              "M&A Retention Pool Modeler",
-            ]}
+            items={["Dilution Stress Tester", "M&A Retention Pool Modeler"]}
           />
           <BacklogColumn
             title="Narrative + memo layer"
-            why="Vendors generate numbers. The board memo, the proxy narrative, and the question list still get written by hand."
-            items={[
-              "Pay Ratio Narrative Drafter",
-              "Proxy CD&A Drafter",
-              "Comp Committee Memo Builder",
-            ]}
+            why="Vendors generate numbers. The proxy narrative and the pay-ratio disclosure still get written by hand."
+            items={["Pay Ratio Narrative Drafter", "Proxy CD&A Drafter"]}
           />
           <BacklogColumn
             title="Cross-functional coordination"
@@ -159,13 +183,11 @@ export default function HomePage() {
             items={["Vest Stack Visualizer", "Refresh Multiple Tracker"]}
           />
           <BacklogColumn
-            title="Tax + AMT scenarios"
+            title="Tax scenarios"
             why="Vendors record transactions; they don’t model decisions. These are the Excel models employees and execs ask TR for."
             items={[
-              "AMT Scenario Modeler",
               "ISO Disqualifying Disposition Calculator",
               "Multi-Grant Tax Sequencer",
-              "ASC 718 Expense Forecaster",
             ]}
           />
           <BacklogColumn
