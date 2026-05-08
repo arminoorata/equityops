@@ -708,7 +708,7 @@ export default function UnderwaterOptionsView() {
                 style={{ borderColor: "var(--line)", color: "var(--muted)" }}
               >
                 <Th>Band</Th>
-                <Th align="right">FMV/strike ≥</Th>
+                <Th align="right">FMV/strike range</Th>
                 <Th align="right">Grants</Th>
                 <Th align="right">Holders</Th>
                 <Th align="right">Shares</Th>
@@ -726,7 +726,7 @@ export default function UnderwaterOptionsView() {
                   <tr key={b.label} className="border-b" style={{ borderColor: "var(--line)" }}>
                     <td className="py-1.5 pr-2">{b.label}</td>
                     <td className="py-1.5 pr-2 text-right font-mono">
-                      {b.minRatio.toFixed(2)}
+                      {b.minRatio.toFixed(2)}–{b.maxRatio.toFixed(2)}
                     </td>
                     <td className="py-1.5 pr-2 text-right font-mono">
                       {b.grantCount.toLocaleString()}

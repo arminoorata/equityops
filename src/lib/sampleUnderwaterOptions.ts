@@ -14,8 +14,8 @@ import {
  *
  * Numbers are tech-style: pre-IPO ISO/NSO grants sized for a F50
  * private with a recent down round. Current FMV $50 against strikes
- * ranging from $5 (founder grant, deep ITM) to $200 (recent peak,
- * severely underwater).
+ * ranging from $5 (founder grant, deep ITM) to $250 (post-peak,
+ * extremely underwater).
  */
 export const SAMPLE_OPTION_GRANTS: OptionGrant[] = [
   // ── Founder-era ISO, deep in the money ──
@@ -32,10 +32,11 @@ export const SAMPLE_OPTION_GRANTS: OptionGrant[] = [
   // ── Deeply underwater (50 / 80 = 0.625) ──
   g("E1007", "G. Bauer",   "L7", "Engineering", "US", "G-1001", "ISO", "2022-08-15", "2032-08-15",  80,  6000,  3000,    0, 0),
   g("E1008", "H. Singh",   "L7", "Engineering", "US", "G-1002", "NSO", "2022-08-15", "2032-08-15",  80,  5000,  2500,    0, 0),
-  // ── Severely underwater (50 / 200 = 0.25) ──
+  // ── Severely underwater (50 / 200 = 0.25; lands in [0.25, 0.50)) ──
   g("E1009", "I. Olsen",   "L6", "Engineering", "DK", "G-1101", "NSO", "2024-02-15", "2034-02-15", 200,  2000,   500,    0, 0),
   g("E1010", "J. Müller",  "L6", "Engineering", "DE", "G-1102", "NSO", "2024-02-15", "2034-02-15", 200,  1800,   450,    0, 0),
-  g("E1011", "K. Carter",  "L7", "Engineering", "US", "G-1103", "NSO", "2024-02-15", "2034-02-15", 200,  4000,  1000,    0, 0),
+  // ── Extremely underwater (50 / 250 = 0.20; lands in [0.00, 0.25)) ──
+  g("E1011", "K. Carter",  "L7", "Engineering", "US", "G-1103", "NSO", "2024-02-15", "2034-02-15", 250,  4000,  1000,    0, 0),
   // ── Expired grant ──
   g("E1012", "L. Tanaka",  "L5", "Sales",       "JP", "G-1200", "NSO", "2014-01-15", "2024-01-15",  20,  1000,  1000,  500, 0),
   // ── SAR ──

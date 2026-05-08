@@ -156,32 +156,53 @@ describe("evaluateGrant — outstanding-share derivation", () => {
   });
 });
 
-describe("evaluateGrant — depth bands", () => {
-  it("classifies severely underwater (ratio 0.10)", () => {
+describe("evaluateGrant — depth bands (half-open intervals on FMV/strike)", () => {
+  it("classifies slightly underwater at ratio 0.96 (in [0.95, 1.00))", () => {
+    // 50 / 52 = 0.9615 → "Slightly underwater"
+    const r = evaluateGrant(
+      baseGrant({ strike: 52 }),
+      baseSettings(),
+      parseISODate("2026-05-08")!,
+    );
+    expect(r.status).toBe("UNDERWATER");
+    expect(r.depthBandLabel).toBe("Slightly underwater");
+  });
+  it("classifies moderately underwater at ratio 0.80 (in [0.75, 0.95))", () => {
+    // 50 / 62.5 = 0.80 → "Moderately underwater"
+    const r = evaluateGrant(
+      baseGrant({ strike: 62.5 }),
+      baseSettings(),
+      parseISODate("2026-05-08")!,
+    );
+    expect(r.depthBandLabel).toBe("Moderately underwater");
+  });
+  it("classifies deeply underwater at the inclusive 0.50 boundary", () => {
+    // 50 / 100 = 0.50 → boundary, lands in [0.50, 0.75) → "Deeply underwater"
+    const r = evaluateGrant(
+      baseGrant({ strike: 100 }),
+      baseSettings(),
+      parseISODate("2026-05-08")!,
+    );
+    expect(r.depthBandLabel).toBe("Deeply underwater");
+  });
+  it("classifies severely underwater at exactly the 0.25 boundary", () => {
+    // 50 / 200 = 0.25 → boundary, lands in [0.25, 0.50) → "Severely underwater"
+    const r = evaluateGrant(
+      baseGrant({ strike: 200 }),
+      baseSettings(),
+      parseISODate("2026-05-08")!,
+    );
+    expect(r.depthBandLabel).toBe("Severely underwater");
+  });
+  it("classifies extremely underwater for ratios below 0.25", () => {
+    // 50 / 500 = 0.10 → in [0.00, 0.25) → "Extremely underwater"
     const r = evaluateGrant(
       baseGrant({ strike: 500 }),
       baseSettings(),
       parseISODate("2026-05-08")!,
     );
     expect(r.status).toBe("UNDERWATER");
-    expect(r.depthBandLabel).toBe("Severely underwater"); // 0.1 ≥ 0
-  });
-  it("classifies deeply underwater (ratio 0.50)", () => {
-    const r = evaluateGrant(
-      baseGrant({ strike: 100 }),
-      baseSettings(),
-      parseISODate("2026-05-08")!,
-    );
-    expect(r.depthBandLabel).toBe("Deeply underwater"); // 0.5 ≥ 0.5
-  });
-  it("classifies moderately underwater (ratio 0.80)", () => {
-    const r = evaluateGrant(
-      baseGrant({ strike: 62.5 }),
-      baseSettings(),
-      parseISODate("2026-05-08")!,
-    );
-    // 50/62.5 = 0.80 → ≥ 0.75, < 0.95 → "Moderately underwater"
-    expect(r.depthBandLabel).toBe("Moderately underwater");
+    expect(r.depthBandLabel).toBe("Extremely underwater");
   });
 });
 

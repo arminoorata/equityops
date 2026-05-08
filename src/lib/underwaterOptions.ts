@@ -56,24 +56,31 @@ export type OptionGrant = {
   notes?: string;
 };
 
+export type DepthBand = {
+  /** Inclusive lower bound on FMV/strike ratio. */
+  minRatio: number;
+  /** Exclusive upper bound on FMV/strike ratio. */
+  maxRatio: number;
+  /** Distinct human label for this band. Must not collide with another band. */
+  label: string;
+};
+
 export type UnderwaterSettings = {
   /** Current FMV / trading-day reference per share. */
   currentFmv: number;
   /** ISO YYYY-MM-DD. Defaults to today. Used for expired-grant detection. */
   asOfDate?: string;
   /**
-   * Depth bands, in order of severity. Each entry: lower bound
-   * (inclusive) and label. Strike-vs-FMV ratio: e.g., 0.5 = strike is
-   * 200% of FMV (deep underwater). 1.0 = at the money.
+   * Depth bands, in order of severity. Each band is a half-open
+   * range [minRatio, maxRatio) on FMV/strike. The engine bins each
+   * underwater grant into exactly one band by interval membership;
+   * adjacent bands must not overlap.
    *
-   * The engine bins each underwater grant into the first band whose
-   * lower bound is ≤ the grant's FMV/strike ratio.
+   * Distinct labels are required. Earlier versions of this engine
+   * de-duplicated by label, which silently dropped a band when two
+   * entries shared a label.
    */
-  depthBands: Array<{
-    /** Inclusive lower bound on FMV/strike ratio. */
-    minRatio: number;
-    label: string;
-  }>;
+  depthBands: DepthBand[];
   /**
    * If true, expired grants (past expiration date as of the as-of
    * date) are excluded from the analysis. Default: true.
@@ -120,6 +127,8 @@ export type DepthBucket = {
   label: string;
   /** Inclusive lower bound on FMV/strike ratio for this band. */
   minRatio: number;
+  /** Exclusive upper bound on FMV/strike ratio for this band. */
+  maxRatio: number;
   grantCount: number;
   holderCount: number;
   totalShares: number;
@@ -213,20 +222,23 @@ export const STATUS_LABEL: Record<GrantStatus, string> = {
 };
 
 /**
- * Default depth bands. FMV/strike ratio:
- *   - 0.95–1.00  → "At the money" (treated as not-underwater above 1)
- *   - 0.75–0.95  → "Slightly underwater" (5–25% below)
- *   - 0.50–0.75  → "Moderately underwater" (25–50% below)
- *   - 0.25–0.50  → "Deeply underwater" (50–75% below)
- *   - 0.00–0.25  → "Severely underwater" (>75% below)
+ * Default depth bands. Half-open intervals on FMV/strike, severity
+ * ordered. Each band has a distinct label so the memo and table
+ * report the correct bracket.
+ *
+ *   - [0.95, 1.00) "Slightly underwater"   (FMV is 95–100% of strike)
+ *   - [0.75, 0.95) "Moderately underwater" (FMV is 75–95% of strike)
+ *   - [0.50, 0.75) "Deeply underwater"     (FMV is 50–75% of strike)
+ *   - [0.25, 0.50) "Severely underwater"   (FMV is 25–50% of strike)
+ *   - [0.00, 0.25) "Extremely underwater"  (FMV is < 25% of strike)
  */
-export function defaultDepthBands(): UnderwaterSettings["depthBands"] {
+export function defaultDepthBands(): DepthBand[] {
   return [
-    { minRatio: 0.95, label: "Slightly underwater" },
-    { minRatio: 0.75, label: "Moderately underwater" },
-    { minRatio: 0.5, label: "Deeply underwater" },
-    { minRatio: 0.25, label: "Severely underwater" },
-    { minRatio: 0, label: "Severely underwater" },
+    { minRatio: 0.95, maxRatio: 1.0, label: "Slightly underwater" },
+    { minRatio: 0.75, maxRatio: 0.95, label: "Moderately underwater" },
+    { minRatio: 0.5, maxRatio: 0.75, label: "Deeply underwater" },
+    { minRatio: 0.25, maxRatio: 0.5, label: "Severely underwater" },
+    { minRatio: 0, maxRatio: 0.25, label: "Extremely underwater" },
   ];
 }
 
@@ -267,17 +279,20 @@ function todayISO(): string {
 
 // ───────── Per-row evaluation ─────────
 
-function depthBandFor(
-  ratio: number,
-  bands: UnderwaterSettings["depthBands"],
-): string | undefined {
-  if (ratio >= 1) return undefined;
-  // Sort bands descending by minRatio so we hit the tightest band first.
-  const sorted = [...bands].sort((a, b) => b.minRatio - a.minRatio);
-  for (const b of sorted) {
-    if (ratio >= b.minRatio) return b.label;
+/**
+ * Bin a ratio into a depth band by half-open interval [minRatio,
+ * maxRatio). Returns undefined for ratios at or above 1.0 (those
+ * grants are AT_THE_MONEY or IN_THE_MONEY, not underwater). For
+ * ratios that fall in a gap between bands, returns undefined too —
+ * the analysis surfaces the gap rather than silently assigning a
+ * bucket. The default bands have no gaps.
+ */
+function depthBandFor(ratio: number, bands: DepthBand[]): string | undefined {
+  if (!Number.isFinite(ratio) || ratio >= 1) return undefined;
+  for (const b of bands) {
+    if (ratio >= b.minRatio && ratio < b.maxRatio) return b.label;
   }
-  return sorted[sorted.length - 1]?.label;
+  return undefined;
 }
 
 export function evaluateGrant(
@@ -621,24 +636,38 @@ function computeDepthBands(
   underwater: GrantWithStatus[],
   settings: UnderwaterSettings,
 ): DepthBucket[] {
-  // Build an ordered, de-duplicated list of bands.
-  const seen = new Map<string, { minRatio: number; label: string }>();
-  for (const b of [...settings.depthBands].sort((a, b) => b.minRatio - a.minRatio)) {
-    if (!seen.has(b.label)) seen.set(b.label, b);
-  }
-  const orderedBands = Array.from(seen.values());
-  const out: DepthBucket[] = orderedBands.map((b) => ({
-    label: b.label,
-    minRatio: b.minRatio,
-    grantCount: 0,
-    holderCount: 0,
-    totalShares: 0,
-    totalSpreadValue: 0,
-  }));
-  const holderSets = orderedBands.map(() => new Set<string>());
+  // Sort severity-first (highest minRatio first) so the table reads
+  // top-down from "Slightly underwater" to "Extremely underwater".
+  const orderedBands = [...settings.depthBands].sort(
+    (a, b) => b.minRatio - a.minRatio,
+  );
+  // Distinct labels are required by contract. Duplicate-label entries
+  // would cause silent bucket loss; surface a usable bucket each time
+  // by appending a disambiguator if a config is malformed.
+  const seenLabels = new Set<string>();
+  const out: DepthBucket[] = orderedBands.map((b) => {
+    let label = b.label;
+    if (seenLabels.has(label)) {
+      label = `${label} [${b.minRatio.toFixed(2)}–${b.maxRatio.toFixed(2)})`;
+    }
+    seenLabels.add(label);
+    return {
+      label,
+      minRatio: b.minRatio,
+      maxRatio: b.maxRatio,
+      grantCount: 0,
+      holderCount: 0,
+      totalShares: 0,
+      totalSpreadValue: 0,
+    };
+  });
+  const holderSets = out.map(() => new Set<string>());
   for (const g of underwater) {
-    if (!g.depthBandLabel) continue;
-    const idx = orderedBands.findIndex((b) => b.label === g.depthBandLabel);
+    if (g.fmvStrikeRatio === undefined) continue;
+    const idx = out.findIndex(
+      (b) =>
+        g.fmvStrikeRatio! >= b.minRatio && g.fmvStrikeRatio! < b.maxRatio,
+    );
     if (idx === -1) continue;
     out[idx].grantCount += 1;
     out[idx].totalShares += g.sharesOutstandingComputed;
@@ -680,8 +709,11 @@ export function composeUnderwaterMemo(analysis: UnderwaterAnalysis): string {
     `- Expired grants: ${settings.excludeExpired ? "excluded from analysis" : "included in analysis"}.`,
   );
   lines.push(
-    `- Depth bands (FMV/strike ratio): ${settings.depthBands
-      .map((b) => `${b.label} ≥ ${b.minRatio.toFixed(2)}`)
+    `- Depth bands (FMV/strike ratio, half-open intervals): ${settings.depthBands
+      .map(
+        (b) =>
+          `${b.label} [${b.minRatio.toFixed(2)}, ${b.maxRatio.toFixed(2)})`,
+      )
       .join(", ")}.`,
   );
   lines.push("");
@@ -738,7 +770,7 @@ export function composeUnderwaterMemo(analysis: UnderwaterAnalysis): string {
   } else {
     byDepthBand.forEach((b) => {
       lines.push(
-        `- **${b.label}** (FMV/strike ≥ ${b.minRatio.toFixed(2)}): ${b.grantCount.toLocaleString()} grants · ${b.holderCount.toLocaleString()} holders · ${b.totalShares.toLocaleString()} shares`,
+        `- **${b.label}** (FMV/strike ${b.minRatio.toFixed(2)}–${b.maxRatio.toFixed(2)}): ${b.grantCount.toLocaleString()} grants · ${b.holderCount.toLocaleString()} holders · ${b.totalShares.toLocaleString()} shares`,
       );
     });
   }
