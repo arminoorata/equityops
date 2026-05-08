@@ -88,6 +88,14 @@ export default function HomePage() {
             stage="Private + public"
             cta="Open the auditor"
           />
+          <ToolCard
+            title="Underwater Options Analyzer"
+            description="Percent underwater by shares and holders, intrinsic and spread value, depth bands, tranches by grant year and strike, vested vs unvested split. Audit memo for TR, finance, accounting, legal, and the comp committee. Reports the math; does not recommend repricing."
+            href="/underwater-options"
+            audience="TR leaders · Comp Committee prep · Plan-amendment design"
+            stage="Public + late-stage private"
+            cta="Open the analyzer"
+          />
         </div>
       </section>
 
@@ -104,20 +112,10 @@ export default function HomePage() {
             className="max-w-md text-[11px] leading-5"
             style={{ color: "var(--muted)" }}
           >
-            The next tools in the queue. Scoped, not yet built. Listed in
-            current priority order.
+            The next tool in the queue. Scoped, not yet built.
           </p>
         </div>
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <ToolCard
-            title="Underwater Options Analyzer"
-            description="What share of outstanding options are underwater, by tranche and grant date. The pre-read for any plan-amendment or refresh decision in a depressed-stock environment."
-            href="#"
-            audience="TR leaders · Comp Committee prep · Plan amendment design"
-            stage="Public"
-            cta="Scoping"
-            status="Build next"
-          />
           <ToolCard
             title="Hire Range Equity Calculator"
             description="Translate offer-letter dollar value to share count given current FMV, dilution, and 4-year expected value. The tool recruiters and TR partners reach for during every offer cycle."

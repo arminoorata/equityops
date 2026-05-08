@@ -36,9 +36,9 @@ does not clear that bar, it stays in the queue.
 3. **Equity Event Readiness Planner** — live at `/event-readiness`
 4. **Refresh Grant Sizing Tool** — live at `/refresh-sizing`
 5. **Grant Distribution Auditor** — live at `/grant-distribution`
+6. **Underwater Options Analyzer** — live at `/underwater-options`
 
 ### Build next
-6. **Underwater Options Analyzer** — `/underwater-options`
 7. **Hire Range Equity Calculator** — `/hire-range`
 
 ### Backlog
@@ -106,7 +106,7 @@ with a CSV download.
 | Tool | Status | Audience | Stage | Vendor gap it fills |
 |---|---|---|---|---|
 | Grant Distribution Auditor | **Available now** | Mid + Sr | Both | Distribution by level, function, country, year, award type, performance tier, and optional demographic dimensions. Concentration math, cohort outliers, audit memo. Vendor exports raw data; analytics are manual. |
-| Underwater Options Analyzer | **Build next** | Mid + Sr | Both | What % of outstanding options are underwater, by tranche and grant date. Useful before plan amendments and refresh decisions. |
+| Underwater Options Analyzer | **Available now** | Mid + Sr | Both | Percent underwater by shares + holders, intrinsic / spread value, depth bands, tranches by year × strike, vested vs unvested split, audit memo. Reports the math; does not recommend repricing. |
 | Vest Stack Visualizer | Backlog | Mid + Sr | Both | Upcoming vest events on a timeline, with cliff cohorts and double-trigger events called out. |
 | Refresh Multiple Tracker | Backlog | Mid + Sr | Both | Refresh size relative to original new-hire grant, by employee, over time. |
 
