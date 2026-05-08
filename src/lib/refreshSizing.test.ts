@@ -455,7 +455,7 @@ describe("analyzeRefresh", () => {
 // ───────── Memo + CSV ─────────
 
 describe("composeRefreshMemo", () => {
-  it("renders totals, distribution and disclaimer", () => {
+  it("renders numbered sections, totals, distribution and disclaimer", () => {
     const g = defaultGuidelines();
     const s: RefreshSettings = { ...baseSettings(), totalBudget: 100000 };
     const rows: EmployeeRow[] = [
@@ -465,10 +465,13 @@ describe("composeRefreshMemo", () => {
     const a = analyzeRefresh(rows, g, s);
     const memo = composeRefreshMemo(a, g);
     expect(memo).toContain("# Refresh grant sizing — planning memo");
-    expect(memo).toContain("## Totals");
+    expect(memo).toContain("## 1. Inputs and assumptions");
+    expect(memo).toContain("## 2. Totals");
     expect(memo).toContain("Proposed dollars:");
-    expect(memo).toContain("## Distribution by level");
-    expect(memo).toContain("## Distribution by performance tier");
+    expect(memo).toContain("## 3. Distribution by level");
+    expect(memo).toContain("## 4. Distribution by performance tier");
+    expect(memo).toContain("## 5. Exceptions");
+    expect(memo).toContain("## 7. Recommended next steps");
     expect(memo).toContain("## Disclaimer");
     expect(memo).toContain("Budget utilization");
   });
@@ -476,7 +479,25 @@ describe("composeRefreshMemo", () => {
     const g = defaultGuidelines();
     const rows: EmployeeRow[] = [baseRow({ rowId: "1", level: "" })];
     const memo = composeRefreshMemo(analyzeRefresh(rows, g, baseSettings()), g);
-    expect(memo).toContain("Rows needing manual review");
+    expect(memo).toContain("## 6. Rows needing manual review");
+  });
+  it("renders the guideline matrix as a markdown table", () => {
+    const g = defaultGuidelines();
+    const memo = composeRefreshMemo(
+      analyzeRefresh([baseRow()], g, baseSettings()),
+      g,
+    );
+    expect(memo).toContain("Refresh guideline matrix applied");
+    // Header row of the matrix table.
+    expect(memo).toMatch(/\| Level \| Top \| High \| Meets \| Emerging \| Below \|/);
+    // L5 row exists.
+    expect(memo).toMatch(/\| L5 \|/);
+  });
+  it("notes when budget reference is not set", () => {
+    const g = defaultGuidelines();
+    const s: RefreshSettings = { ...baseSettings(), totalBudget: undefined };
+    const memo = composeRefreshMemo(analyzeRefresh([baseRow()], g, s), g);
+    expect(memo).toContain("not set");
   });
 });
 

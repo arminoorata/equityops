@@ -754,6 +754,17 @@ export function analyzeRefresh(
  * Compose an executive memo from the analysis. Pure deterministic
  * templating — no AI involved. The user pastes this into the comp
  * committee pre-read or the budget meeting deck.
+ *
+ * Sections are numbered to match the order a TR practitioner would
+ * read them in a pre-read packet:
+ *
+ *   1. Inputs and assumptions   (every setting + the guideline matrix)
+ *   2. Totals                   (dollars, shares, budget posture)
+ *   3. Distribution by level    (where the spend lands)
+ *   4. Distribution by tier     (concentration in performance tiers)
+ *   5. Exceptions               (counts by type, what to look at first)
+ *   6. Rows needing review      (the table the leader walks line by line)
+ *   7. Recommended next steps   (handoffs to TR, finance, accounting, legal)
  */
 export function composeRefreshMemo(
   analysis: RefreshAnalysis,
@@ -768,37 +779,42 @@ export function composeRefreshMemo(
   );
   lines.push("");
 
-  lines.push("## Approach");
+  // ── 1. Inputs and assumptions ──
+  lines.push("## 1. Inputs and assumptions");
   lines.push(
-    `- Population: ${summary.headcount.toLocaleString()} employee${summary.headcount === 1 ? "" : "s"} in scope.`,
+    `- Population in scope: ${summary.headcount.toLocaleString()} employee${summary.headcount === 1 ? "" : "s"}.`,
   );
   lines.push(
-    `- Guidelines: matrix of ${guidelines.levels.length} level${guidelines.levels.length === 1 ? "" : "s"} × ${PERFORMANCE_TIER_ORDER.filter((t) => t !== "UNKNOWN").length} performance tiers.`,
+    `- Default FMV per share: ${formatUSD(settings.fmvPerShare)} (per-row overrides honored where supplied).`,
   );
   lines.push(
-    `- Band tolerance: in-band = target × ${guidelines.bandLowMultiple.toFixed(2)} to target × ${guidelines.bandHighMultiple.toFixed(2)}.`,
+    `- Share rounding increment: ${settings.shareRoundingIncrement.toLocaleString()} share${settings.shareRoundingIncrement === 1 ? "" : "s"}.`,
+  );
+  lines.push(
+    `- In-band tolerance: target × ${guidelines.bandLowMultiple.toFixed(2)} to target × ${guidelines.bandHighMultiple.toFixed(2)}.`,
   );
   lines.push(
     `- Outlier thresholds: way-low < ${settings.lowOutlierMultiple.toFixed(2)}× target, way-high > ${settings.highOutlierMultiple.toFixed(2)}× target.`,
   );
   lines.push(
-    `- FMV per share (default): ${formatUSD(settings.fmvPerShare)}. Per-row overrides honored where supplied.`,
-  );
-  lines.push(
     `- Stale-grant threshold: ${settings.staleGrantThresholdMonths} months (computed against ${settings.asOfDate ?? todayISO()}).`,
-  );
-  lines.push(
-    `- Share rounding increment: ${settings.shareRoundingIncrement.toLocaleString()}.`,
   );
   if (settings.totalBudget && settings.totalBudget > 0) {
     lines.push(`- Total budget reference: ${formatUSD(settings.totalBudget)}.`);
+  } else {
+    lines.push(
+      `- Total budget reference: not set (budget variance not computed).`,
+    );
   }
   lines.push("");
+  lines.push("**Refresh guideline matrix applied** (target dollars per cell):");
+  lines.push("");
+  lines.push(matrixAsMarkdownTable(guidelines));
+  lines.push("");
 
-  lines.push("## Totals");
-  lines.push(
-    `- Proposed dollars: ${formatUSD(summary.totalProposedDollars)}`,
-  );
+  // ── 2. Totals ──
+  lines.push("## 2. Totals");
+  lines.push(`- Proposed dollars: ${formatUSD(summary.totalProposedDollars)}`);
   lines.push(
     `- Proposed shares: ${summary.totalProposedShares.toLocaleString()}`,
   );
@@ -813,7 +829,8 @@ export function composeRefreshMemo(
   }
   lines.push("");
 
-  lines.push("## Distribution by level");
+  // ── 3. Distribution by level ──
+  lines.push("## 3. Distribution by level");
   if (summary.byLevel.length === 0) {
     lines.push("- (none)");
   } else {
@@ -825,19 +842,25 @@ export function composeRefreshMemo(
   }
   lines.push("");
 
-  lines.push("## Distribution by performance tier");
+  // ── 4. Distribution by performance tier ──
+  lines.push("## 4. Distribution by performance tier");
   if (summary.byTier.length === 0) {
     lines.push("- (none)");
   } else {
     summary.byTier.forEach((t) => {
+      const share =
+        summary.totalProposedDollars > 0
+          ? t.totalDollars / summary.totalProposedDollars
+          : 0;
       lines.push(
-        `- **${PERFORMANCE_TIER_LABEL[t.tier]}** — ${t.headcount.toLocaleString()} employees · ${formatUSD(t.totalDollars)}`,
+        `- **${PERFORMANCE_TIER_LABEL[t.tier]}** — ${t.headcount.toLocaleString()} employees · ${formatUSD(t.totalDollars)} (${(share * 100).toFixed(1)}% of spend)`,
       );
     });
   }
   lines.push("");
 
-  lines.push("## Exceptions");
+  // ── 5. Exceptions ──
+  lines.push("## 5. Exceptions");
   const exceptionEntries = (
     Object.entries(summary.countByException) as Array<[ExceptionType, number]>
   )
@@ -852,16 +875,20 @@ export function composeRefreshMemo(
   }
   lines.push("");
 
-  // Top rows needing manual review (cap at 12 to keep memo readable).
+  // ── 6. Rows needing manual review ──
   const reviewRows = recommendations.filter((r) => r.needsManualReview);
   if (reviewRows.length > 0) {
-    lines.push("## Rows needing manual review (top 12)");
+    lines.push("## 6. Rows needing manual review (top 12)");
     reviewRows.slice(0, 12).forEach((r) => {
       const id = r.employeeId || r.employeeName || r.rowId;
       lines.push(
         `- **${id}** (${r.level || "—"} · ${PERFORMANCE_TIER_LABEL[r.performanceTier]}) — proposed ${formatUSD(r.proposedRefreshDollars)}${
           r.guidelineTargetDollars !== undefined
             ? ` vs target ${formatUSD(r.guidelineTargetDollars)}`
+            : ""
+        }${
+          r.proposedShareCount !== undefined && r.fmvUsed !== undefined
+            ? ` → ${r.proposedShareCount.toLocaleString()} shares at ${formatUSD(r.fmvUsed)} FMV`
             : ""
         }`,
       );
@@ -875,12 +902,55 @@ export function composeRefreshMemo(
     lines.push("");
   }
 
+  // ── 7. Recommended next steps ──
+  lines.push("## 7. Recommended next steps");
+  lines.push(
+    "1. **TR leadership review.** Walk the rows needing manual review with the manager / HRBP that owns each population. Document the rationale for any approved override.",
+  );
+  lines.push(
+    "2. **Finance review.** Confirm the proposed dollars fit the FY refresh budget and any in-flight reorg / RIF assumptions. Confirm FMV inputs against the most recent 409A or trading-day reference.",
+  );
+  lines.push(
+    "3. **Accounting review.** Confirm ASC 718 expense impact and forfeiture rate assumptions. Reconcile to the share pool and dilution model.",
+  );
+  lines.push(
+    "4. **Legal review.** Confirm consistency with plan-document share reserve, individual-grant limits, country-specific restrictions, and section 16 / insider obligations.",
+  );
+  lines.push(
+    "5. **Comp committee handoff.** Package this memo with burn-rate / overhang context (Stock Plan Health Check), the dilution forecast, and the share-pool runway. Capture committee questions for the follow-up materials.",
+  );
+  lines.push("");
+
+  // ── Disclaimer ──
   lines.push("## Disclaimer");
   lines.push(
     "Outputs reflect the guidelines, settings, and inputs typed above. Real refresh decisions are governed by the company's plan document, the comp committee's authority, accounting expense considerations (ASC 718), share-pool runway, dilution targets, and applicable employment and securities law. This memo is a planning aid, not an approval. Bring it to TR leadership, finance, accounting, and legal before any action.",
   );
 
   return lines.join("\n");
+}
+
+/**
+ * Render the guideline matrix as a markdown table for the memo. Cells
+ * with no target render as "—" so the reader can spot intentional gaps.
+ */
+function matrixAsMarkdownTable(guidelines: RefreshGuidelines): string {
+  const tiers = PERFORMANCE_TIER_ORDER.filter((t) => t !== "UNKNOWN");
+  const header = ["Level", ...tiers.map((t) => PERFORMANCE_TIER_LABEL[t])];
+  const sep = header.map(() => "---");
+  const rows = guidelines.levels.map((lvl) => {
+    const cells = tiers.map((t) => {
+      const cell = guidelines.byLevelByTier[lvl]?.[t];
+      if (!cell || cell.targetDollars <= 0) return "—";
+      return formatUSD(cell.targetDollars);
+    });
+    return [lvl, ...cells];
+  });
+  if (rows.length === 0) {
+    return "(no levels configured)";
+  }
+  const all = [header, sep, ...rows];
+  return all.map((r) => `| ${r.join(" | ")} |`).join("\n");
 }
 
 // ───────── CSV output ─────────

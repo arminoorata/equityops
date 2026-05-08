@@ -39,6 +39,7 @@ does not clear that bar, it stays in the queue.
 ### Build next
 5. **Hire Range Equity Calculator** — `/hire-range` (next up)
 6. **Grant Distribution Auditor** — `/distribution-audit`
+7. **Underwater Options Analyzer** — `/underwater`
 
 ### Backlog
 Everything below. Order and scope are not committed; categories below
@@ -105,7 +106,7 @@ with a CSV download.
 | Tool | Status | Audience | Stage | Vendor gap it fills |
 |---|---|---|---|---|
 | Grant Distribution Auditor | **Build next** | Mid + Sr | Both | Distribution by level, year, country, demographics. Vendor exports raw data; analytics are manual. |
-| Underwater Options Analyzer | Backlog | Mid + Sr | Both | What % of outstanding options are underwater, by tranche and grant date. Useful before plan amendments and refresh decisions. |
+| Underwater Options Analyzer | **Build next** | Mid + Sr | Both | What % of outstanding options are underwater, by tranche and grant date. Useful before plan amendments and refresh decisions. |
 | Vest Stack Visualizer | Backlog | Mid + Sr | Both | Upcoming vest events on a timeline, with cliff cohorts and double-trigger events called out. |
 | Refresh Multiple Tracker | Backlog | Mid + Sr | Both | Refresh size relative to original new-hire grant, by employee, over time. |
 
@@ -164,11 +165,12 @@ education guides — all hand-written today.
 
 ## Decisions still open
 
-1. **Order between Hire Range Equity Calculator and Grant Distribution
-   Auditor.** Hire Range pairs with the Equity Portal sibling and has
-   recurring weekly demand. Distribution Auditor pairs with the Plan
-   Health Check and supports DEIB conversations. Currently sequenced
-   Hire Range first.
+1. **Order across the Build next queue.** Hire Range pairs with the
+   Equity Portal sibling and has recurring weekly demand. Distribution
+   Auditor pairs with the Plan Health Check and supports DEIB
+   conversations. Underwater Options Analyzer is most useful in
+   depressed-stock cycles and pairs with plan-amendment thinking.
+   Currently sequenced Hire Range → Distribution Auditor → Underwater.
 2. **Branding evolution.** The brand identity can grow with the toolbox
    (logo treatment, illustration of the "above the vendor" stack
    metaphor). Currently using the eyebrow-only sibling pattern.

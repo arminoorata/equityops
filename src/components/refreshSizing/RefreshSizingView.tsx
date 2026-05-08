@@ -271,6 +271,16 @@ export default function RefreshSizingView() {
 
   return (
     <div className="space-y-6">
+      {/* Persistent provenance strip — visible without being noisy. */}
+      <div
+        className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]"
+        style={{ color: "var(--muted)" }}
+      >
+        <ProvChip>Client-side only · no upload</ProvChip>
+        <ProvChip>Deterministic engine · no AI in calc</ProvChip>
+        <ProvChip>Not a system of record</ProvChip>
+      </div>
+
       <div
         className="flex flex-wrap items-center justify-between gap-3 rounded-md border-l-4 px-4 py-3"
         style={{
@@ -305,6 +315,40 @@ export default function RefreshSizingView() {
           </button>
         </div>
       </div>
+
+      {/* How to use this in a refresh cycle. Compact, ordered, practitioner-targeted. */}
+      <CardSection title="How to use this in a refresh cycle">
+        <ol
+          className="grid grid-cols-1 gap-2 text-sm leading-6 md:grid-cols-5"
+          style={{ color: "var(--muted)" }}
+        >
+          <HowToStep
+            n={1}
+            title="Assemble population"
+            body="Pull headcount + level + performance tier + retention from Workday / SuccessFactors / Oracle HCM. Pull current and unvested equity values from Fidelity / Shareworks / Computershare / E*TRADE / Carta. Upload as CSV or paste inline."
+          />
+          <HowToStep
+            n={2}
+            title="Confirm guideline matrix"
+            body="Validate the level × performance-tier targets against the company refresh framework. Adjust band tolerance and outlier multiples to match TR policy."
+          />
+          <HowToStep
+            n={3}
+            title="Review exceptions"
+            body="Walk above / below / way-out / missing-guideline / retention-override / stale-grant flags. Document the rationale for any approved override."
+          />
+          <HowToStep
+            n={4}
+            title="Export memo and CSV"
+            body="Copy or download the executive memo (markdown) and the per-employee CSV. Memo is structured for a comp-committee pre-read with numbered sections."
+          />
+          <HowToStep
+            n={5}
+            title="Hand off"
+            body="TR leadership → finance (budget + FMV) → accounting (ASC 718 + forfeiture) → legal (plan share-reserve, country, section 16) → comp committee."
+          />
+        </ol>
+      </CardSection>
 
       <details
         className="rounded-md border p-4"
@@ -375,6 +419,7 @@ export default function RefreshSizingView() {
       <CardSection
         title="Settings"
         hint="Defaults a TR practitioner would set once at the start of a refresh cycle."
+        sourceHint="FMV per share: most recent 409A valuation (private) or trading-day reference (public). Total budget: TR / finance refresh budget for the FY. As-of date: usually the refresh cycle effective date. Outlier multiples: TR policy thresholds for what triggers leadership review."
       >
         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
           <Field label="Default FMV per share">
@@ -555,7 +600,7 @@ export default function RefreshSizingView() {
       <CardSection
         title="Employee population"
         hint="Manual entry or paste/upload a refresh-cycle worksheet from your HRIS, total rewards, or finance system."
-        sourceHint="Workday / SAP SuccessFactors / Oracle HCM / your TR refresh worksheet. Combine with grants outstanding from Fidelity / Shareworks / Computershare / E*TRADE / Carta to populate Current Equity Value, Unvested Value, Last Grant Date, and Prior Refresh Amount. Required column: Level. Strongly recommended: Performance Tier, Retention Risk, Critical Role, Proposed Refresh Dollars, FMV/Share."
+        sourceHint="Level, Performance Tier, Retention Risk, Critical Role, Country: Workday / SAP SuccessFactors / Oracle HCM / Dayforce / UKG. Current Equity Value, Unvested Value, Last Grant Date, Prior Refresh Amount, FMV: Fidelity / Shareworks (Morgan Stanley) / Computershare / E*TRADE / Carta grants outstanding export. Proposed Refresh Dollars: manager / TR worksheet (leave blank to seed from the guideline matrix). Required column: Level. Strongly recommended: Performance Tier, FMV/Share."
       >
         <div className="flex flex-wrap items-center gap-2 text-xs">
           <button
@@ -1105,7 +1150,10 @@ export default function RefreshSizingView() {
         </div>
       </CardSection>
 
-      <CardSection title="Exceptions">
+      <CardSection
+        title="Exceptions"
+        hint="Counts by type, sorted by volume. Red = blocks approval until resolved (missing data, way-out outliers). Amber = needs documentation. Gold = retention override (above-band but explained)."
+      >
         {analysis.summary.headcountWithExceptions === 0 ? (
           <p className="text-sm" style={{ color: "var(--muted)" }}>
             No exceptions flagged.
@@ -1119,29 +1167,37 @@ export default function RefreshSizingView() {
             )
               .filter(([, n]) => n > 0)
               .sort((a, b) => b[1] - a[1])
-              .map(([type, n]) => (
-                <div
-                  key={type}
-                  className="rounded-md border p-3"
-                  style={{
-                    borderColor: "var(--line)",
-                    background: "var(--bg-alt)",
-                  }}
-                >
-                  <p
-                    className="text-[10px] font-medium uppercase tracking-[0.14em]"
-                    style={{ color: "var(--muted)" }}
+              .map(([type, n]) => {
+                const tone = type === "NEEDS_MANUAL_REVIEW" ? "red" : flagTone(type);
+                const s = FLAG_TONE_STYLE[tone];
+                return (
+                  <div
+                    key={type}
+                    className="rounded-md border-l-4 p-3"
+                    style={{
+                      borderColor: "var(--line)",
+                      borderLeftColor: s.color,
+                      background: "var(--bg-alt)",
+                    }}
                   >
-                    {EXCEPTION_LABEL[type]}
-                  </p>
-                  <p
-                    className="mt-1 text-sm font-semibold"
-                    style={{ color: "var(--text)", fontFamily: "var(--font-mono)" }}
-                  >
-                    {n.toLocaleString()}
-                  </p>
-                </div>
-              ))}
+                    <p
+                      className="text-[10px] font-medium uppercase tracking-[0.14em]"
+                      style={{ color: s.color }}
+                    >
+                      {EXCEPTION_LABEL[type]}
+                    </p>
+                    <p
+                      className="mt-1 text-sm font-semibold"
+                      style={{
+                        color: "var(--text)",
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      {n.toLocaleString()}
+                    </p>
+                  </div>
+                );
+              })}
           </div>
         )}
       </CardSection>
@@ -1456,6 +1512,7 @@ function RecommendationRow({ r }: { r: EmployeeRecommendation }) {
   const name = r.employeeName && r.employeeId ? r.employeeName : "";
   const pct = r.pctOfGuideline;
   const pctTone = pctTone_(r);
+  const math = describeMath(r);
   return (
     <>
       <tr style={{ borderColor: "var(--line)" }}>
@@ -1508,67 +1565,186 @@ function RecommendationRow({ r }: { r: EmployeeRecommendation }) {
         <td className="py-2 pr-2">
           <div className="flex flex-wrap gap-1">
             {r.exceptions.length === 0 ? (
-              <span
-                className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
-                style={{
-                  background: "var(--accent-soft)",
-                  color: "var(--accent)",
-                }}
-              >
-                In band
-              </span>
+              <FlagChip tone="ok">In band</FlagChip>
             ) : (
               r.exceptions.map((e, i) => (
-                <span
+                <FlagChip
                   key={i}
-                  className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
-                  style={{
-                    background:
-                      e.type === "RETENTION_OVERRIDE"
-                        ? "var(--accent-soft)"
-                        : "var(--surface-alt)",
-                    color:
-                      e.type === "RETENTION_OVERRIDE"
-                        ? "var(--accent)"
-                        : "var(--muted)",
-                  }}
+                  tone={flagTone(e.type)}
                   title={e.message}
                 >
                   {EXCEPTION_LABEL[e.type]}
-                </span>
+                </FlagChip>
               ))
             )}
             {r.isCriticalRole && (
-              <span
-                className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
-                style={{
-                  background: "var(--accent-soft)",
-                  color: "var(--accent)",
-                }}
-              >
-                Critical role
-              </span>
+              <FlagChip tone="accent">Critical role</FlagChip>
             )}
           </div>
         </td>
       </tr>
-      {r.exceptions.length > 0 && (
-        <tr>
-          <td
-            colSpan={7}
-            className="pb-2 text-[11px] leading-5"
-            style={{ color: "var(--muted)" }}
-          >
-            {r.exceptions.map((e, i) => (
-              <span key={i} className="block">
-                · {e.message}
-              </span>
-            ))}
-          </td>
-        </tr>
-      )}
+      {/* How calculated — always visible so the F50 reader can audit the math line by line. */}
+      <tr>
+        <td
+          colSpan={7}
+          className="pb-2 pl-1 pr-2 text-[11px] leading-5"
+          style={{ color: "var(--muted)" }}
+        >
+          <span style={{ fontFamily: "var(--font-mono)" }}>{math}</span>
+          {r.exceptions.length > 0 && (
+            <span className="mt-1 block">
+              {r.exceptions.map((e, i) => (
+                <span key={i} className="block">
+                  · {e.message}
+                </span>
+              ))}
+            </span>
+          )}
+        </td>
+      </tr>
     </>
   );
+}
+
+/**
+ * Severity tone for an exception chip. Red = blocks approval until
+ * fixed (missing data, way-out outliers). Amber = needs documentation
+ * (in-band breach, stale grant, missing FMV, zero proposed). Accent
+ * (gold) = the retention override — above-band but explained.
+ */
+function flagTone(type: ExceptionType): FlagTone {
+  switch (type) {
+    case "MISSING_LEVEL":
+    case "MISSING_GUIDELINE":
+    case "WAY_ABOVE_GUIDELINE":
+    case "WAY_BELOW_GUIDELINE":
+    case "NEEDS_MANUAL_REVIEW":
+      return "red";
+    case "ABOVE_GUIDELINE":
+    case "BELOW_GUIDELINE":
+    case "STALE_LAST_GRANT":
+    case "MISSING_FMV":
+    case "ZERO_VALUE_PROPOSED":
+      return "amber";
+    case "RETENTION_OVERRIDE":
+      return "accent";
+  }
+}
+
+type FlagTone = "ok" | "amber" | "red" | "accent";
+
+const FLAG_TONE_STYLE: Record<
+  FlagTone,
+  { bg: string; color: string; border: string }
+> = {
+  ok: {
+    bg: "var(--green-bg)",
+    color: "var(--green)",
+    border: "var(--green-border)",
+  },
+  amber: {
+    bg: "var(--amber-bg)",
+    color: "var(--amber)",
+    border: "var(--amber-border)",
+  },
+  red: {
+    bg: "var(--red-bg)",
+    color: "var(--red)",
+    border: "var(--red-border)",
+  },
+  accent: {
+    bg: "var(--accent-soft)",
+    color: "var(--accent)",
+    border: "var(--accent)",
+  },
+};
+
+function FlagChip({
+  tone,
+  title,
+  children,
+}: {
+  tone: FlagTone;
+  title?: string;
+  children: React.ReactNode;
+}) {
+  const s = FLAG_TONE_STYLE[tone];
+  return (
+    <span
+      className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
+      style={{ background: s.bg, color: s.color, border: `1px solid ${s.border}` }}
+      title={title}
+    >
+      {children}
+    </span>
+  );
+}
+
+function ProvChip({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      className="rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em]"
+      style={{
+        background: "var(--surface)",
+        color: "var(--muted)",
+        border: "1px solid var(--line)",
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+function HowToStep({
+  n,
+  title,
+  body,
+}: {
+  n: number;
+  title: string;
+  body: string;
+}) {
+  return (
+    <li
+      className="rounded-md border p-3"
+      style={{ borderColor: "var(--line)", background: "var(--bg-alt)" }}
+    >
+      <p
+        className="text-[10px] font-semibold uppercase tracking-[0.14em]"
+        style={{ color: "var(--accent)" }}
+      >
+        Step {n}
+      </p>
+      <p
+        className="mt-1 text-[12.5px] font-semibold leading-5"
+        style={{ color: "var(--text)" }}
+      >
+        {title}
+      </p>
+      <p className="mt-1 text-[11px] leading-5">{body}</p>
+    </li>
+  );
+}
+
+/**
+ * Render the per-row math the F50 leader needs to see inline. Reads
+ * left to right: dollar amount, FMV, shares, target source. Adapts to
+ * missing inputs so the line doesn't lie about the math.
+ */
+function describeMath(r: EmployeeRecommendation): string {
+  const proposed = formatUSD(r.proposedRefreshDollars);
+  const sharesPart =
+    r.proposedShareCount !== undefined && r.fmvUsed !== undefined
+      ? `${proposed} ÷ ${formatUSD(r.fmvUsed)} FMV = ${r.proposedShareCount.toLocaleString()} shares`
+      : `${proposed} (shares omitted — FMV missing)`;
+  const targetPart =
+    r.guidelineTargetDollars !== undefined
+      ? `target ${formatUSD(r.guidelineTargetDollars)} = ${r.level || "—"} × ${PERFORMANCE_TIER_LABEL[r.performanceTier]} guideline`
+      : `no guideline cell for ${r.level || "—"} × ${PERFORMANCE_TIER_LABEL[r.performanceTier]}`;
+  const seededPart = r.proposedSeededFromGuideline
+    ? " · seeded from guideline (no manager override supplied)"
+    : "";
+  return `${sharesPart} · ${targetPart}${seededPart}`;
 }
 
 function pctTone_(r: EmployeeRecommendation): string {

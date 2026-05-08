@@ -72,6 +72,14 @@ export default function HomePage() {
             stage="Private + public"
             cta="Open the planner"
           />
+          <ToolCard
+            title="Refresh Grant Sizing Tool"
+            description="Multi-tier refresh logic by level × performance tier. Translates dollars to share count at FMV, flags above/below-guideline rows and retention overrides, and produces a comp-committee-ready memo with budget summary and exception list."
+            href="/refresh-sizing"
+            audience="TR leaders · Comp consulting · Comp Committee prep"
+            stage="Private + public"
+            cta="Open the tool"
+          />
         </div>
       </section>
 
@@ -88,20 +96,11 @@ export default function HomePage() {
             className="max-w-md text-[11px] leading-5"
             style={{ color: "var(--muted)" }}
           >
-            Highest demand from practitioners. The next three tools the
-            workbench will ship, in this order. The first is live today.
+            The next tools in the queue. Scoped, not yet built. Listed in
+            current priority order.
           </p>
         </div>
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <ToolCard
-            title="Refresh Grant Sizing Tool"
-            description="Multi-tier refresh logic by level × performance tier. Translates dollars to share count at FMV, flags above/below-guideline rows and retention overrides, and produces a comp-committee-ready memo with budget summary and exception list."
-            href="/refresh-sizing"
-            audience="TR leaders · Comp consulting · Comp Committee prep"
-            stage="Private + public"
-            cta="Open the tool"
-            status="Live"
-          />
           <ToolCard
             title="Hire Range Equity Calculator"
             description="Translate offer-letter dollar value to share count given current FMV, dilution, and 4-year expected value. The tool recruiters and TR partners reach for during every offer cycle."
@@ -117,6 +116,15 @@ export default function HomePage() {
             href="#"
             audience="TR leaders · DEIB partners · Audit prep"
             stage="Private + public"
+            cta="Scoping"
+            status="Build next"
+          />
+          <ToolCard
+            title="Underwater Options Analyzer"
+            description="What share of outstanding options are underwater, by tranche and grant date. The pre-read for any plan-amendment or refresh decision in a depressed-stock environment."
+            href="#"
+            audience="TR leaders · Comp Committee prep · Plan amendment design"
+            stage="Public"
             cta="Scoping"
             status="Build next"
           />
@@ -172,11 +180,7 @@ export default function HomePage() {
           <BacklogColumn
             title="Ad-hoc analytics"
             why="Vendors force an Excel export for anything non-standard. These pre-build the slices practitioners use most."
-            items={[
-              "Underwater Options Analyzer",
-              "Vest Stack Visualizer",
-              "Refresh Multiple Tracker",
-            ]}
+            items={["Vest Stack Visualizer", "Refresh Multiple Tracker"]}
           />
           <BacklogColumn
             title="Tax + AMT scenarios"
