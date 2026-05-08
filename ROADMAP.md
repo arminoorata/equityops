@@ -37,9 +37,12 @@ does not clear that bar, it stays in the queue.
 4. **Refresh Grant Sizing Tool** — live at `/refresh-sizing`
 5. **Grant Distribution Auditor** — live at `/grant-distribution`
 6. **Underwater Options Analyzer** — live at `/underwater-options`
+7. **Hire Range Equity Calculator** — live at `/hire-range`
 
 ### Build next
-7. **Hire Range Equity Calculator** — `/hire-range`
+The seven highest-priority "above-the-vendor-platform" tools are now
+live. The next build sequence pulls from the Backlog categories below;
+order is not yet committed.
 
 ### Backlog
 Everything below. Order and scope are not committed; categories below
@@ -57,7 +60,7 @@ by 10%" or "what if we added 200 hires to next year's plan."
 |---|---|---|---|---|
 | Retirement Vesting Impact Forecaster | **Available now** | All | Both | Per-award status, shares vesting due to retirement, shares forfeited, memo for legal/payroll. Vendor shows current state; the "what happens at the retirement date" model lives in Excel. |
 | Refresh Grant Sizing Tool | **Available now** | Mid + Sr | Both | Multi-tier refresh logic, performance triggers, vest patterns, exception flags, executive memo. Today: Excel. |
-| Hire Range Equity Calculator | **Build next** | All | Both | Translate offer-letter $ value to share count given current FMV + dilution + 4-year expected value. Today: Excel. |
+| Hire Range Equity Calculator | **Available now** | All | Both | Translates target equity value into a low / mid / high share range at FMV, builds a vesting schedule with annualized vest value, and produces a recruiter prep memo with ISO/NSO/RSU candidate-context talking points. |
 | Plan Amendment Impact Modeler | Backlog | Sr | Public | "What does adding evergreen do to overhang?" / "What does extending vest do to expense?" Today: custom Excel each time. |
 | Dilution Stress Tester | Backlog | Sr | Both | "If we hire 200 more next year, what does overhang look like?" Vendor shows current state, not forward scenarios. |
 | M&A Retention Pool Modeler | Backlog | Sr | Both | Acquisition retention pool sizing, conversion ratios, accelerated vesting. Always Excel today. |

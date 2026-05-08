@@ -96,34 +96,13 @@ export default function HomePage() {
             stage="Public + late-stage private"
             cta="Open the analyzer"
           />
-        </div>
-      </section>
-
-      {/* ──────── Build next ──────── */}
-      <section className="mt-12">
-        <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <p
-            className="text-[11px] font-medium uppercase tracking-[0.18em]"
-            style={{ color: "var(--text)" }}
-          >
-            Build next
-          </p>
-          <p
-            className="max-w-md text-[11px] leading-5"
-            style={{ color: "var(--muted)" }}
-          >
-            The next tool in the queue. Scoped, not yet built.
-          </p>
-        </div>
-        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <ToolCard
             title="Hire Range Equity Calculator"
-            description="Translate offer-letter dollar value to share count given current FMV, dilution, and 4-year expected value. The tool recruiters and TR partners reach for during every offer cycle."
-            href="#"
+            description="Translate a target equity value into a low / mid / high share range at the current FMV, lay out the year-by-year vesting schedule, surface the annualized vest value, and produce a recruiter prep memo with candidate-context talking points for ISO, NSO, and RSU awards."
+            href="/hire-range"
             audience="Recruiters · TR partners · Hiring managers"
             stage="Private + public"
-            cta="Designing"
-            status="Build next"
+            cta="Open the calculator"
           />
         </div>
       </section>
