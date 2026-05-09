@@ -329,7 +329,7 @@ export default function RetirementVestingView() {
           className="cursor-pointer text-sm font-medium"
           style={{ color: "var(--accent)" }}
         >
-          How this tool works (and what it isn&rsquo;t)
+          What this tool is, and what it isn&rsquo;t
         </summary>
         <div
           className="mt-3 grid gap-4 text-sm leading-6 md:grid-cols-2"

@@ -783,4 +783,14 @@ describe("composeRetirementMemo", () => {
     expect(memo.toLowerCase()).toContain("not legal, tax, or financial advice");
     expect(memo.toLowerCase()).toContain("plan document");
   });
+
+  it("includes Cross-functional handoff and Recommended next steps sections", () => {
+    const analysis = analyzeAwards([baseAward], baseEmployee, defaultPolicy());
+    const memo = composeRetirementMemo(analysis, baseEmployee, defaultPolicy());
+    expect(memo).toContain("## Cross-functional handoff");
+    expect(memo).toContain("## Recommended next steps");
+    expect(memo).toMatch(/Equity admin|TR/);
+    expect(memo).toMatch(/[Ll]egal/);
+    expect(memo).toMatch(/[Pp]ayroll/);
+  });
 });

@@ -243,4 +243,17 @@ describe("buildBoardMemo", () => {
     const memo = buildBoardMemo(EMPTY_INPUTS, evaluatePlanHealth(EMPTY_INPUTS));
     expect(memo).toContain("No flagged plan features");
   });
+
+  it("includes a Recommended next steps section that hands off to TR / legal / finance / accounting / committee", () => {
+    const memo = buildBoardMemo(
+      SAMPLE_COMPANY,
+      evaluatePlanHealth(SAMPLE_COMPANY),
+    );
+    expect(memo).toContain("## Recommended next steps");
+    expect(memo).toMatch(/TR leadership/i);
+    expect(memo).toMatch(/[Ll]egal/);
+    expect(memo).toMatch(/[Ff]inance/);
+    expect(memo).toMatch(/[Aa]ccounting/);
+    expect(memo).toMatch(/[Cc]omp committee/);
+  });
 });

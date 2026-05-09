@@ -198,6 +198,13 @@ describe("generatePlan — VESTING_CLIFF", () => {
     });
     expect(plan.memo).toContain("Cohort skews engineering");
   });
+
+  it("memo includes a Recommended next steps section that hands off to the platform of record + cross-functional team", () => {
+    const plan = generatePlan(baseInputs);
+    expect(plan.memo).toContain("## Recommended next steps");
+    expect(plan.memo).toMatch(/cross-functional kickoff/i);
+    expect(plan.memo).toMatch(/platform-of-record|Fidelity|Shareworks|Computershare|Carta/);
+  });
 });
 
 // ───────── Owner overrides ─────────

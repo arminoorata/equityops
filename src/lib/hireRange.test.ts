@@ -193,10 +193,14 @@ describe("composeOfferMemo", () => {
       "## 2. Range",
       "## 3. Vesting schedule",
       "## 4. Recruiter talking points",
+      "## 6. Cross-functional handoff",
+      "## 7. Recommended next steps",
       "## Disclaimer",
     ].forEach((s) => expect(memo).toContain(s));
     expect(memo).toMatch(/Internal recruiter/);
     expect(memo).toMatch(/not personalized investment advice/i);
+    expect(memo).toMatch(/[Hh]iring manager|TR partner/);
+    expect(memo).toMatch(/[Ll]egal/);
   });
   it("includes a vesting table when the schedule is non-empty", () => {
     const q = computeHireQuote(baseScenario(), baseSettings());

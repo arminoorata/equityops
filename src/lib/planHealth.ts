@@ -360,6 +360,25 @@ export function buildBoardMemo(
   });
   lines.push("");
 
+  lines.push("## Recommended next steps");
+  lines.push("");
+  lines.push(
+    "1. **TR leadership.** Walk the headline metrics and flagged plan features against the company's grant philosophy and the most recent investor feedback (proxy vote results, shareholder engagement notes).",
+  );
+  lines.push(
+    "2. **Legal.** Confirm any flagged feature against current plan-document language and listing-rule restrictions (NYSE Listed Company Manual; Nasdaq Listing Rule 5635(c)). Confirm the disclosure timeline.",
+  );
+  lines.push(
+    "3. **Finance.** Reconcile burn rate and overhang to the latest 10-Q / 10-K. Confirm the dilution forecast lands inside the comp committee's stated tolerance.",
+  );
+  lines.push(
+    "4. **Accounting.** Pair this memo with the ASC 718 Expense Forecaster output for the post-flag award population, particularly when a plan amendment is being scoped.",
+  );
+  lines.push(
+    "5. **Comp committee handoff.** Bring this memo with the Plan Amendment Impact Modeler output (if applicable) and the Refresh Sizing memo for the full pre-read.",
+  );
+  lines.push("");
+
   lines.push("## Disclaimer");
   lines.push("");
   lines.push(

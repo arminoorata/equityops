@@ -338,6 +338,21 @@ function composeMemo(
   }
   lines.push("");
 
+  lines.push("## Recommended next steps");
+  lines.push(
+    "1. Schedule a cross-functional kickoff with TR, equity ops, payroll, legal, accounting, IR, and comms. Walk the countdown checklist line by line and assign each owner.",
+  );
+  lines.push(
+    "2. Confirm the platform-of-record (Fidelity / Shareworks / Computershare / E*TRADE / Carta) is configured for the event mechanics; the workbench does not process the event.",
+  );
+  lines.push(
+    "3. Send the coordination emails on the cadence the checklist sets out; cc TR / legal so the audit trail lives in one thread.",
+  );
+  lines.push(
+    "4. Save the assumption sheet (event type, dates, scope) alongside the memo so the post-event review uses the same baseline.",
+  );
+  lines.push("");
+
   lines.push("## Disclaimer");
   lines.push(
     "Outputs reflect typed inputs and a deterministic checklist library. They do not replace your company's plan document, the relevant transaction agreements, or counsel. Bring this plan to the cross-functional kickoff and adjust to your specific circumstances before executing.",

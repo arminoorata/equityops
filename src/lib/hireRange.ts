@@ -474,6 +474,41 @@ export function composeOfferMemo(quote: HireQuote): string {
     lines.push("");
   }
 
+  // 6. Cross-functional handoff
+  lines.push("## 6. Cross-functional handoff");
+  lines.push(
+    "1. **Hiring manager / leveling.** Confirm the level + geo guideline supports the target. Document any deviation rationale.",
+  );
+  lines.push(
+    "2. **TR partner.** Sign off on any range outside the level guardrail. Document the override rationale on the offer file.",
+  );
+  lines.push(
+    "3. **Finance.** Confirm the share count fits the FY hiring-plan dilution forecast and the share-pool runway (Stock Plan Health Check).",
+  );
+  lines.push(
+    "4. **Legal.** Confirm geo-specific plan-document constraints (sub-plan, securities filing, tax-favorable schemes). Confirm the offer letter language matches the plan.",
+  );
+  lines.push(
+    "5. **Comp committee.** Required for executive-level grants beyond the standing delegation; confirm the disclosure timeline.",
+  );
+  lines.push("");
+
+  // 7. Recommended next steps
+  lines.push("## 7. Recommended next steps");
+  lines.push(
+    "1. Lock the FMV reference (date + value) on the offer file before extending the verbal.",
+  );
+  lines.push(
+    "2. Save the share count, range, and assumption sheet alongside the candidate file so the equity admin processes the eventual grant against the same numbers.",
+  );
+  lines.push(
+    "3. If the candidate counters on equity, re-run the model with the new target so the share count reconciles to the same FMV.",
+  );
+  lines.push(
+    "4. Once the offer is accepted, hand off the level + share count + vesting pattern to the equity admin team for grant processing on the platform of record.",
+  );
+  lines.push("");
+
   // Disclaimer
   lines.push("## Disclaimer");
   lines.push(

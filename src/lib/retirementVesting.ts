@@ -884,6 +884,36 @@ export function composeRetirementMemo(
   }
   lines.push("");
 
+  lines.push("## Cross-functional handoff");
+  lines.push(
+    "1. **Equity admin / TR.** Confirm the award status table against the source-of-truth grants outstanding report from the stock administration platform (Fidelity / Shareworks / Computershare / E*TRADE / Carta). Reconcile any NEEDS_REVIEW row before sharing.",
+  );
+  lines.push(
+    "2. **Legal.** Confirm the eligibility rule and treatment table against the plan document and any individual-grant agreement nuances (qualifying termination definitions, change-in-control overlays, exception clauses).",
+  );
+  lines.push(
+    "3. **Payroll.** Confirm the income-recognition and tax-withholding implications for the shares vesting at retirement; coordinate the timing against the company's normal vest-cycle payroll calendar.",
+  );
+  lines.push(
+    "4. **Finance.** Reconcile any accelerated vesting against the in-flight ASC 718 expense forecast and the FY budget.",
+  );
+  lines.push("");
+
+  lines.push("## Recommended next steps");
+  lines.push(
+    "1. Walk the per-award outcomes with the employee and document the rationale for any exception.",
+  );
+  lines.push(
+    "2. Resolve every NEEDS_REVIEW row before the retirement date; if data cannot be reconciled, escalate to legal.",
+  );
+  lines.push(
+    "3. If the retirement date moves, re-run the model with the new date so the eligibility check uses the correct age and service.",
+  );
+  lines.push(
+    "4. Save the assumption sheet alongside the memo so the legal / payroll review thread has the same inputs the model used.",
+  );
+  lines.push("");
+
   lines.push("## Disclaimer");
   lines.push(
     "Outputs reflect the policy and inputs typed above. Real-world award treatment is governed by the company's plan document and individual award agreements. Plans frequently include nuances not modeled here (qualifying termination definitions, change-in-control overlays, exception clauses, holding-period requirements). Bring this memo and your award agreements to legal and payroll before any action.",

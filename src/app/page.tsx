@@ -16,37 +16,93 @@ export default function HomePage() {
         className="mt-4 max-w-2xl text-base leading-7 md:text-lg md:leading-8"
         style={{ color: "var(--muted)" }}
       >
-        Your stock administration platform is the system of record. It
-        processes vests, issues grants, and runs Form 4 filings. It does not
-        write the board memo, model the refresh, coordinate the cross-
-        functional event, draft the proxy narrative, or stress-test the plan
-        amendment. That work currently happens in Excel.
+        Fidelity, Shareworks, Computershare, E*TRADE, and Carta own the
+        ledger. Workday, SAP SuccessFactors, Oracle HCM, Dayforce, and UKG
+        own the people record. Neither writes the board memo, models the
+        refresh cycle, audits the grant distribution, forecasts ASC 718
+        expense, models the plan amendment, walks the AMT exercise math,
+        coordinates the cross-functional equity event, or assembles the
+        comp-committee pre-read. That work currently happens in Excel.
       </p>
       <p
         className="mt-3 max-w-2xl text-base leading-7 md:text-lg md:leading-8"
         style={{ color: "var(--muted)" }}
       >
-        Equity Ops Workbench is the toolbox for the work between the export
-        and the deliverable. Free, public, no login.
+        Equity Ops Workbench is the eleven-tool practitioner toolbox for the
+        work between the export and the deliverable. Free, public, no login.
+        Every calculation is deterministic; nothing leaves your browser.
       </p>
 
-      {/* ──────── Available now ──────── */}
+      {/* ──────── Practitioner promise chip strip ──────── */}
+      <div
+        className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]"
+        style={{ color: "var(--muted)" }}
+      >
+        <span
+          className="rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em]"
+          style={{
+            background: "var(--surface)",
+            color: "var(--muted)",
+            border: "1px solid var(--line)",
+          }}
+        >
+          Client-side only · no upload
+        </span>
+        <span
+          className="rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em]"
+          style={{
+            background: "var(--surface)",
+            color: "var(--muted)",
+            border: "1px solid var(--line)",
+          }}
+        >
+          Deterministic · no AI in calc paths
+        </span>
+        <span
+          className="rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em]"
+          style={{
+            background: "var(--surface)",
+            color: "var(--muted)",
+            border: "1px solid var(--line)",
+          }}
+        >
+          Not a system of record
+        </span>
+        <span
+          className="rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em]"
+          style={{
+            background: "var(--surface)",
+            color: "var(--muted)",
+            border: "1px solid var(--line)",
+          }}
+        >
+          Memo + CSV outputs every tool
+        </span>
+      </div>
+
+      {/* ──────── Available now (grouped by gap) ──────── */}
       <section className="mt-12">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
           <p
             className="text-[11px] font-medium uppercase tracking-[0.18em]"
             style={{ color: "var(--accent)" }}
           >
-            Available now
+            Available now · eleven tools
           </p>
           <p
             className="max-w-md text-[11px] leading-5"
             style={{ color: "var(--muted)" }}
           >
-            Built, tested, and live. Each tool starts from a vendor export and
-            ends with a deliverable a senior leader would put in a pre-read.
+            Built, tested, live. Each tool starts from a vendor export or a
+            structured input and ends with a deliverable a senior leader would
+            put in a comp-committee pre-read.
           </p>
         </div>
+
+        <CategoryHeading
+          label="Diagnose, audit, and write the memo"
+          gap="Stock administration platforms generate the numbers. Writing the board memo, auditing the slice, modeling the amendment, and assembling the committee pre-read still happens in Excel."
+        />
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <ToolCard
             title="Stock Plan Health Check"
@@ -55,22 +111,6 @@ export default function HomePage() {
             audience="Heads of Total Rewards · Comp Committee prep"
             stage="Public + late-stage private"
             cta="Open the diagnostic"
-          />
-          <ToolCard
-            title="Retirement Vesting Impact Forecaster"
-            description="Turn a grants outstanding CSV into a retirement-date impact analysis: which awards fully vest, which pro-rate, which forfeit. Deterministic rules engine with a copyable memo for equity, legal, and payroll review."
-            href="/retirement-vesting"
-            audience="Equity admin · TR managers · senior leaders prepping a retirement"
-            stage="Private + public"
-            cta="Open the forecaster"
-          />
-          <ToolCard
-            title="Equity Event Readiness Planner"
-            description="Phased countdown checklist + coordination email drafts for vesting cliffs, double-trigger RSU events at IPO, tender offers, IPO lockup expirations, M&A acceleration, spin-offs, and plan terminations. Your platform processes the event; this orchestrates the work around it."
-            href="/event-readiness"
-            audience="TR managers · Equity ops · Senior leaders prepping a transaction"
-            stage="Private + public"
-            cta="Open the planner"
           />
           <ToolCard
             title="Refresh Grant Sizing Tool"
@@ -97,30 +137,6 @@ export default function HomePage() {
             cta="Open the analyzer"
           />
           <ToolCard
-            title="Hire Range Equity Calculator"
-            description="Translate a target equity value into a low / mid / high share range at the current FMV, lay out the year-by-year vesting schedule, surface the annualized vest value, and produce a recruiter prep memo with candidate-context talking points for ISO, NSO, and RSU awards."
-            href="/hire-range"
-            audience="Recruiters · TR partners · Hiring managers"
-            stage="Private + public"
-            cta="Open the calculator"
-          />
-          <ToolCard
-            title="AMT Scenario Modeler"
-            description="Plan-level ISO exercise math: bargain element by grant, regular tax vs tentative minimum tax, AMT exposure, breakeven share count, optional sale scenario. Editable assumptions; deterministic engine; memo for the conversation with a qualified tax advisor."
-            href="/amt-scenario"
-            audience="TR / equity ops · Equity holders prepping an exercise · Tax-advisor handoff"
-            stage="Late-stage private + public"
-            cta="Open the modeler"
-          />
-          <ToolCard
-            title="ASC 718 Expense Forecaster"
-            description="Forecast stock-based compensation expense by reporting period from a population of awards, grant-date fair values, vesting terms, forfeiture and PSU probability assumptions. Per-period bucket, by-type and by-year totals, accounting memo. Planning forecast; not GAAP-final."
-            href="/asc-718-forecast"
-            audience="TR · Stock-comp accounting · Finance · External auditor handoff"
-            stage="Public + late-stage private"
-            cta="Open the forecaster"
-          />
-          <ToolCard
             title="Plan Amendment Impact Modeler"
             description="Model how additional shares, evergreen, share recycling, and repricing posture affect overhang, runway, dilution, and the investor narrative. Investor concern flags (high evergreen, large overhang increment, repricing without approval). Comp-committee memo with legal and finance question list."
             href="/plan-amendment"
@@ -135,6 +151,60 @@ export default function HomePage() {
             audience="Heads of TR / CHRO · Comp committee secretary · Pre-read assembly"
             stage="All stages"
             cta="Open the builder"
+          />
+        </div>
+
+        <CategoryHeading
+          label="Plan the cycle, coordinate the event"
+          gap="Vendors process the event. The phased work around it (offer cycles, retirements, IPO double-trigger, tender offers, M&A acceleration) happens elsewhere."
+        />
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <ToolCard
+            title="Hire Range Equity Calculator"
+            description="Translate a target equity value into a low / mid / high share range at the current FMV, lay out the year-by-year vesting schedule, surface the annualized vest value, and produce a recruiter prep memo with candidate-context talking points for ISO, NSO, and RSU awards."
+            href="/hire-range"
+            audience="Recruiters · TR partners · Hiring managers"
+            stage="Private + public"
+            cta="Open the calculator"
+          />
+          <ToolCard
+            title="Retirement Vesting Impact Forecaster"
+            description="Turn a grants outstanding CSV into a retirement-date impact analysis: which awards fully vest, which pro-rate, which forfeit. Deterministic rules engine with a copyable memo for equity, legal, and payroll review."
+            href="/retirement-vesting"
+            audience="Equity admin · TR managers · senior leaders prepping a retirement"
+            stage="Private + public"
+            cta="Open the forecaster"
+          />
+          <ToolCard
+            title="Equity Event Readiness Planner"
+            description="Phased countdown checklist + coordination email drafts for vesting cliffs, double-trigger RSU events at IPO, tender offers, IPO lockup expirations, M&A acceleration, spin-offs, and plan terminations. Your platform processes the event; this orchestrates the work around it."
+            href="/event-readiness"
+            audience="TR managers · Equity ops · Senior leaders prepping a transaction"
+            stage="Private + public"
+            cta="Open the planner"
+          />
+        </div>
+
+        <CategoryHeading
+          label="Tax + accounting partner handoff"
+          gap="Vendors record transactions; they don't model decisions or forecast accounting expense. These give TR the numbers a qualified tax advisor or stock-comp accountant will work from."
+        />
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <ToolCard
+            title="AMT Scenario Modeler"
+            description="Plan-level ISO exercise math: bargain element by grant, regular tax vs tentative minimum tax, AMT exposure, breakeven share count, optional sale scenario. Editable tax-year 2026 assumptions; deterministic engine; memo for the conversation with a qualified tax advisor."
+            href="/amt-scenario"
+            audience="TR / equity ops · Equity holders prepping an exercise · Tax-advisor handoff"
+            stage="Late-stage private + public"
+            cta="Open the modeler"
+          />
+          <ToolCard
+            title="ASC 718 Expense Forecaster"
+            description="Forecast stock-based compensation expense by reporting period from a population of awards, grant-date fair values, vesting terms, forfeiture and PSU probability assumptions. Per-period bucket, by-type and by-year totals, accounting memo. Planning forecast; not GAAP-final."
+            href="/asc-718-forecast"
+            audience="TR · Stock-comp accounting · Finance · External auditor handoff"
+            stage="Public + late-stage private"
+            cta="Open the forecaster"
           />
         </div>
       </section>
@@ -339,6 +409,31 @@ function ToolCard({
     <Link href={href} className="block transition-opacity hover:opacity-90">
       {inner}
     </Link>
+  );
+}
+
+function CategoryHeading({
+  label,
+  gap,
+}: {
+  label: string;
+  gap: string;
+}) {
+  return (
+    <div className="mt-8 border-t pt-5" style={{ borderColor: "var(--line)" }}>
+      <p
+        className="text-[11px] font-semibold uppercase tracking-[0.18em]"
+        style={{ color: "var(--text)" }}
+      >
+        {label}
+      </p>
+      <p
+        className="mt-1 max-w-3xl text-[12px] leading-5"
+        style={{ color: "var(--muted)" }}
+      >
+        {gap}
+      </p>
+    </div>
   );
 }
 
