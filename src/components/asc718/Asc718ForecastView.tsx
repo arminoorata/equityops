@@ -853,7 +853,7 @@ export default function Asc718ForecastView() {
           </button>
         </div>
         <pre
-          className="mt-3 whitespace-pre-wrap rounded-md border p-4 text-[12.5px] leading-6"
+          className="mt-3 whitespace-pre-wrap break-words rounded-md border p-4 text-[12.5px] leading-6"
           style={{
             borderColor: "var(--line)",
             background: "var(--bg-alt)",

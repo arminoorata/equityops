@@ -431,7 +431,7 @@ export default function PlanHealthView() {
             title="Board memo draft"
             hint="Plain markdown. Copy and paste into the Comp Committee pre-read or your internal doc."
           >
-            <div className="flex justify-end">
+            <div className="flex flex-wrap justify-end gap-2">
               <button
                 type="button"
                 onClick={copyMemo}
@@ -447,7 +447,7 @@ export default function PlanHealthView() {
               </button>
             </div>
             <pre
-              className="mt-3 whitespace-pre-wrap rounded-md border p-4 text-[13px] leading-6"
+              className="mt-3 whitespace-pre-wrap break-words rounded-md border p-4 text-[12.5px] leading-6"
               style={{
                 borderColor: "var(--line)",
                 background: "var(--bg-alt)",

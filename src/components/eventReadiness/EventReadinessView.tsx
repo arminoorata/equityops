@@ -531,7 +531,7 @@ export default function EventReadinessView() {
               </button>
             </div>
             <pre
-              className="mt-3 whitespace-pre-wrap rounded-md border p-4 text-[12.5px] leading-6"
+              className="mt-3 whitespace-pre-wrap break-words rounded-md border p-4 text-[12.5px] leading-6"
               style={{
                 borderColor: "var(--line)",
                 background: "var(--bg-alt)",
@@ -775,7 +775,7 @@ function EmailCard({
           </button>
         </div>
         <pre
-          className="mt-2 whitespace-pre-wrap text-[12.5px] leading-6"
+          className="mt-2 whitespace-pre-wrap break-words text-[12.5px] leading-6"
           style={{
             color: "var(--text)",
             fontFamily: "var(--font-mono)",

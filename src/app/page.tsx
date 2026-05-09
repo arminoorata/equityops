@@ -35,7 +35,7 @@ export default function HomePage() {
 
       {/* ──────── Practitioner promise chip strip ──────── */}
       <div
-        className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]"
+        className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px]"
         style={{ color: "var(--muted)" }}
       >
         <span
