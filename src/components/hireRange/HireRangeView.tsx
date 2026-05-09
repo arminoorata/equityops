@@ -121,7 +121,7 @@ export default function HireRangeView() {
   };
 
   const downloadCsv = () => {
-    triggerDownload(csv, "hire-range-summary.csv", "text/csv");
+    triggerDownload(csv, "hire-range-results.csv", "text/csv");
   };
 
   return (
@@ -587,7 +587,7 @@ export default function HireRangeView() {
               color: csvCopied ? "var(--accent)" : "var(--text)",
             }}
           >
-            {csvCopied ? "Copied" : "Copy summary CSV"}
+            {csvCopied ? "Copied" : "Copy results CSV"}
           </button>
           <button
             type="button"

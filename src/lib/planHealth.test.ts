@@ -256,4 +256,20 @@ describe("buildBoardMemo", () => {
     expect(memo).toMatch(/[Aa]ccounting/);
     expect(memo).toMatch(/[Cc]omp committee/);
   });
+
+  it("includes an Inputs and assumptions section that surfaces typed values", () => {
+    const memo = buildBoardMemo(
+      SAMPLE_COMPANY,
+      evaluatePlanHealth(SAMPLE_COMPANY),
+    );
+    expect(memo).toContain("## Inputs and assumptions");
+    expect(memo).toContain("Annual gross grants");
+    expect(memo).toContain("Weighted-average common shares outstanding");
+    expect(memo).toContain("Common shares outstanding");
+    expect(memo).toContain("Awards outstanding");
+    expect(memo).toContain("Shares available for grant");
+    // Sample numbers should round-trip into the memo
+    expect(memo).toContain("3,500,000");
+    expect(memo).toContain("9,500,000");
+  });
 });

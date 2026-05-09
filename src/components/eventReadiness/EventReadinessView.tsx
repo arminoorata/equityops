@@ -505,7 +505,7 @@ export default function EventReadinessView() {
                 type="button"
                 onClick={() =>
                   downloadFile(
-                    "event-readiness-plan.md",
+                    "event-readiness-memo.md",
                     plan.memo,
                     "text/markdown",
                   )

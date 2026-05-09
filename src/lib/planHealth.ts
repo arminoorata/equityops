@@ -313,6 +313,29 @@ export function buildBoardMemo(
   );
   lines.push("");
 
+  lines.push("## Inputs and assumptions");
+  lines.push("");
+  lines.push(`- **Company stage:** ${stage}`);
+  lines.push(
+    `- **Annual gross grants (most recent first):** ${inputs.annualGrants.map(formatShareCount).join(" / ")}`,
+  );
+  lines.push(
+    `- **Weighted-average common shares outstanding (most recent first):** ${inputs.weightedAverageSharesOutstanding.map(formatShareCount).join(" / ")}`,
+  );
+  lines.push(
+    `- **Common shares outstanding (today):** ${formatShareCount(inputs.sharesOutstanding)}`,
+  );
+  lines.push(
+    `- **Awards outstanding:** ${formatShareCount(inputs.awardsOutstanding)}`,
+  );
+  lines.push(
+    `- **Shares available for grant:** ${formatShareCount(inputs.sharesAvailableForGrant)}`,
+  );
+  lines.push(
+    `- **Plan features tracked:** single-trigger acceleration, evergreen reserve, repricing without shareholder approval, share recycling, dividend equivalents on unvested awards, liberal change-in-control definition, discounted stock options.`,
+  );
+  lines.push("");
+
   lines.push("## Headline metrics");
   lines.push("");
   lines.push(
@@ -403,6 +426,11 @@ function formatPct(fraction: number): string {
 function formatYears(years: number): string {
   if (!Number.isFinite(years)) return "indefinite (no recent grants modeled)";
   return `${years.toFixed(1)} years`;
+}
+
+function formatShareCount(n: number): string {
+  if (!Number.isFinite(n)) return "—";
+  return Math.round(n).toLocaleString("en-US");
 }
 
 // ───────── Sample-company demo ─────────

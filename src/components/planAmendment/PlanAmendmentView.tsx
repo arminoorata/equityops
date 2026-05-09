@@ -108,7 +108,7 @@ export default function PlanAmendmentView() {
     }
   };
   const downloadCsv = () =>
-    triggerDownload(csv, "plan-amendment-forecast.csv", "text/csv");
+    triggerDownload(csv, "plan-amendment-results.csv", "text/csv");
 
   return (
     <div className="space-y-6">
@@ -527,7 +527,7 @@ export default function PlanAmendmentView() {
               color: csvCopied ? "var(--accent)" : "var(--text)",
             }}
           >
-            {csvCopied ? "Copied" : "Copy forecast CSV"}
+            {csvCopied ? "Copied" : "Copy results CSV"}
           </button>
           <button
             type="button"

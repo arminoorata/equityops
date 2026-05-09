@@ -841,7 +841,7 @@ export default function Asc718ForecastView() {
               color: csvCopied ? "var(--accent)" : "var(--text)",
             }}
           >
-            {csvCopied ? "Copied" : "Copy CSV"}
+            {csvCopied ? "Copied" : "Copy results CSV"}
           </button>
           <button
             type="button"

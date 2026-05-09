@@ -82,6 +82,19 @@ export default function PlanHealthView() {
     }
   };
 
+  const downloadMemo = () => {
+    if (typeof window === "undefined") return;
+    const blob = new Blob([memo], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "stock-plan-health-memo.md";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
       <div
@@ -444,6 +457,17 @@ export default function PlanHealthView() {
                 }}
               >
                 {memoCopied ? "Copied" : "Copy memo"}
+              </button>
+              <button
+                type="button"
+                onClick={downloadMemo}
+                className="rounded-full px-3 py-1.5 text-xs font-medium"
+                style={{
+                  background: "var(--surface-alt)",
+                  color: "var(--text)",
+                }}
+              >
+                Download memo (.md)
               </button>
             </div>
             <pre
