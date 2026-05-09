@@ -29,6 +29,13 @@ export default function SiteFooter() {
             </p>
           </div>
           <div className="flex flex-col gap-1 text-xs md:items-end">
+            <Link
+              href="https://arminoorata.com/mark"
+              aria-label="Why A to the n and A to the alpha?"
+              className="hover:text-[var(--accent)] transition-colors"
+            >
+              Why A<sup>n</sup> and A<sup>α</sup>?
+            </Link>
             <p className="mt-2 uppercase tracking-[0.24em]">
               equityops.arminoorata.com
             </p>
